@@ -1,8 +1,8 @@
 // middlewares/auth.middleware.js
 
-import admin from "../config/firebase.js";
+import { auth } from "../config/firebase.js";
 import { User } from "../models/user.model.js"; // Update this path
-import { ApiError } from "../utils/ApiError.js";
+import { ApiError } from "../utiles/ApiError.js";
 
 export const verifyFirebaseUser = async (req, res, next) => {
     try {
@@ -18,7 +18,7 @@ export const verifyFirebaseUser = async (req, res, next) => {
         const idToken = authHeader.split(" ")[1];
 
         // Verify Firebase Token
-        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        const decodedToken = await auth.verifyIdToken(token);
 
         // Find user in MongoDB
         let user = await User.findOne({

@@ -1,7 +1,7 @@
-import { ApiError } from "../utils/ApiError.js";
+import { ApiError } from "../utiles/ApiError.js";
 import { getUrlScannerPrompt } from "../prompt/promptUrl.js";
 import { z } from "zod";
-import { openRouterClient } from "../config/openRouter.js";
+import  openRouterClient  from "../config/openRouterClient.js";
 
 
 // Validate URL format

@@ -1,5 +1,5 @@
 import { ScanHistory } from "../models/scanHistory.model.js";
-import { ApiError } from "../utils/ApiError.js";
+import { ApiError } from "../utiles/ApiError.js";
 
 export const saveScanHistory = async ({
     user,

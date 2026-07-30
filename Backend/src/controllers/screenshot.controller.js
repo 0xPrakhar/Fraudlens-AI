@@ -1,6 +1,6 @@
 import { scanScreenShot } from "../services/screenshot.service.js";
 import { saveScanHistory } from "../services/history.service.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary } from "../utiles/Cloudnary.js";
 import { ApiError } from "../utiles/ApiError.js";
 import { ApiResponse } from "../utiles/ApiRespone.js";
 import { asyncHandler } from "../utiles/asyncHandler.js";
