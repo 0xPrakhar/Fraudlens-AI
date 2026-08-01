@@ -1,6 +1,6 @@
 import { ApiError } from "../utiles/ApiError.js";
 import { getImageScannerPrompt } from "../prompt/promptImage.js";
-
+import { z } from "zod";
 import openRouterClient  from "../config/openRouterClient.js";
 
 // Validate Cloudinary image URL

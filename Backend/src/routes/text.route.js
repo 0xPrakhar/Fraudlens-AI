@@ -4,7 +4,7 @@ import {verifyFirebaseUser} from "../middleware/auth.middlewar.js"
 import {textScanner} from '../controllers/text.controller.js'
 
 
-router.post(
+textRoutes.post(
     "/text",
     verifyFirebaseUser,
     textScanner
