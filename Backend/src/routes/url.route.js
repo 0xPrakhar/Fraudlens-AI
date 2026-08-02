@@ -6,7 +6,7 @@ import {urlScanner} from "../controllers/url.controller.js"
 
 
 urlRoutes.post(
-    "/url",
+    "/scan",
     verifyFirebaseUser,
     urlScanner
 );
