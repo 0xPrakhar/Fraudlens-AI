@@ -29,6 +29,12 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 
+app.get("/", (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "FraudLens API is running 🚀"
+    });
+});
 //register url 
 app.use('/api/v1/url',urlRoutes)
 app.use('/api/v1/text',textRoutes)
