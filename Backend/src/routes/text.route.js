@@ -5,7 +5,7 @@ import {textScanner} from '../controllers/text.controller.js'
 
 
 textRoutes.post(
-    "/text",
+    "/scan",
     verifyFirebaseUser,
     textScanner
 );

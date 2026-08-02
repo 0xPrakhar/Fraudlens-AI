@@ -100,6 +100,7 @@ export const scanText = async (text) => {
             ],
 
             temperature: 0.2,
+            max_tokens: 1500,
         });
 
 
@@ -142,7 +143,7 @@ export const scanText = async (text) => {
 
         // Step 7: Validate AI output
         const validation =
-            urlThreatSchema.safeParse(parsedResponse);
+            textThreatSchema.safeParse(parsedResponse);
 
 
 

@@ -8,7 +8,7 @@ import {verifyFirebaseUser} from "../middleware/auth.middlewar.js";
 
 
 ScreenShotRoutes.post(
-    "/image",
+    "/scan",
     verifyFirebaseUser,
     upload.single("image"),
     screenshotScanner

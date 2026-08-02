@@ -124,6 +124,7 @@ export const scanScreenShot = async (imageUrl) => {
                 ],
 
                 temperature: 0.2,
+                max_tokens: 1500,
             });
 
         // Step 4: Extract AI Response
