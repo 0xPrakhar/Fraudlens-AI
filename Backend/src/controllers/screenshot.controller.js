@@ -10,6 +10,7 @@ export const screenshotScanner = asyncHandler(async (req, res) => {
     // Step 1: Get uploaded file
     const imagePath = req.file?.path;
 
+
     if (!imagePath) {
         throw new ApiError(400, "Screenshot is required");
     }
