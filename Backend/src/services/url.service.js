@@ -45,6 +45,7 @@ const urlThreatSchema = z.object({
     aiExplanation: z.string(),
 
     technicalAnalysis: z.object({
+        domain: z.string(),
         protocol: z.string(),
         brandDetected: z.string().nullable(),
         typosquattingDetected: z.boolean(),
@@ -72,7 +73,10 @@ export const scanUrl = async (url) => {
     try {
 
         // Step 2: Create AI prompt
-        const prompt = getUrlScannerPrompt(url);
+    const prompt = getUrlScannerPrompt({
+    url,
+    language: "English",
+});
 
 
         // Step 3: Call OpenRouter
@@ -103,6 +107,7 @@ export const scanUrl = async (url) => {
             ],
 
             temperature: 0.2,
+            max_tokens: 1500,
         });
 
 
@@ -125,22 +130,28 @@ export const scanUrl = async (url) => {
             .trim();
 
 
+            console.log("RAW RESPONSE:");
+console.log(aiResponse);
 
-        // Step 6: Convert JSON string to object
-        let parsedResponse;
 
-        try {
 
-            parsedResponse = JSON.parse(cleanedResponse);
+// Step 6: Convert JSON string to object
+let parsedResponse;
 
-        } catch (error) {
+try {
+    
+    parsedResponse = JSON.parse(cleanedResponse);
+    
+} catch (error) {
+    
+    throw new ApiError(
+        500,
+        "AI returned invalid JSON"
+    );
+}
 
-            throw new ApiError(
-                500,
-                "AI returned invalid JSON"
-            );
-        }
-
+console.log("PARSED:");
+console.log(parsedResponse);
 
 
         // Step 7: Validate AI output
@@ -151,9 +162,7 @@ export const scanUrl = async (url) => {
 
         if (!validation.success) {
 
-            console.error(
-                validation.error.format()
-            );
+           console.log(validation.error.issues);
 
 
             throw new ApiError(
