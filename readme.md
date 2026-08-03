@@ -15,7 +15,7 @@
 | **Aman Yadav** | Frontend Development & AI Integration | amanyadav41569@gmail.com |
 | **Adarsh Gupta** | Project Support & Testing Assistance | Gadrash441@gmail.com |
 | **Prakhar Gupta** | Backend Development (Node.js, Database & Firebase), API Integration & Testing | prakhargupta9083@gmail.com |
-| **Vinayak Chauhan** | Presentation (PPT), Documentation & Project Demonstration | shikhaashish1587@gmail.com |
+| **Vinayak Chauhan** | Presentation (PPT), Documentation & Project Demonstration | coderspoint1587@gmail.com |
 | **Aditya Singh** | UI/UX Design & User Experience | thatadityasignh@gmail.com |
 
 
