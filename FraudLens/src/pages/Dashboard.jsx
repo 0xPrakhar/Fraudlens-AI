@@ -62,7 +62,7 @@ export default function DashboardHome() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45 }}
-        className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.2),transparent_40%),linear-gradient(135deg,rgba(15,23,42,0.96),rgba(2,6,23,0.96))] p-6 shadow-[0_35px_120px_-30px_rgba(0,0,0,0.85)]"
+        className="relative overflow-hidden rounded-[32px] border border-white/5 bg-transparent p-6 shadow-none"
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.12)_1px,transparent_0)] bg-size-[24px_24px] opacity-40" />
         <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-cyan-400/20 blur-[120px]" />
@@ -70,7 +70,7 @@ export default function DashboardHome() {
 
         <div className="relative flex flex-col gap-8 xl:flex-row xl:items-center xl:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-sm text-cyan-200">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm text-cyan-200 backdrop-blur-sm">
               <span className="h-2 w-2 rounded-full bg-cyan-400" />
               Good Evening Vinayak 👋
             </div>
@@ -81,11 +81,11 @@ export default function DashboardHome() {
               Multi-agent intelligence is monitoring trust signals, phishing infrastructure, and suspicious behavior in real time.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-3">
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
                 <p className="text-sm text-slate-400">Protected</p>
                 <p className="text-lg font-semibold text-emerald-300">AI Status • Secure</p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-3">
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
                 <p className="text-sm text-slate-400">Threat Level</p>
                 <p className="text-lg font-semibold text-cyan-300">Low • Active</p>
               </div>
