@@ -2,6 +2,7 @@ import express from "express";
 import urlRoutes from "./src/routes/url.route.js";
 import textRoutes from "./src/routes/text.route.js";
 import ScreenShotRoutes from "./src/routes/screenshot.route.js";
+import historyRoutes from './src/routes/history.route.js'
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -39,6 +40,7 @@ app.get("/", (req, res) => {
 app.use('/api/v1/url',urlRoutes)
 app.use('/api/v1/text',textRoutes)
 app.use('/api/v1/screenshot',ScreenShotRoutes)
+app.use('/api/v1/history',historyRoutes)
 
 
 export default app;
