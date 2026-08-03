@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import CountUp from "react-countup";
-import { ArrowUpRight, TrendingUp } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 const accentClasses = {
   cyan: "from-cyan-500/25 to-blue-500/20 text-cyan-300",
@@ -23,7 +22,7 @@ export default function MetricCard({ title, value, change, icon: Icon, accent = 
         <div>
           <p className="text-sm text-slate-400">{title}</p>
           <p className="mt-3 text-3xl font-semibold text-white">
-            <CountUp end={value} duration={1.2} separator="," />
+            {value.toLocaleString()}
           </p>
           <div className="mt-3 flex items-center gap-2 text-sm text-emerald-400">
             <ArrowUpRight size={14} />
