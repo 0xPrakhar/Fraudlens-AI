@@ -1,17 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { User, Mail, Phone, MapPin, Calendar, Shield } from "lucide-react";
 import { useTheme } from "next-themes";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase/firebase";
 
 export default function Profile() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const userProfile = {
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "+1 (555) 123-4567",
-    location: "San Francisco, CA",
-    joinDate: "January 15, 2024",
+    name: user?.displayName || user?.email?.split("@")[0] || "User",
+    email: user?.email || "No email available",
+    phone: "Not provided",
+    location: "Not provided",
+    joinDate: user?.metadata?.creationTime
+      ? new Date(user.metadata.creationTime).toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      : "Recently joined",
     planType: "Pro",
   };
 
