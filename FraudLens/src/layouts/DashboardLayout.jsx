@@ -11,17 +11,19 @@ export default function DashboardLayout() {
   };
 
   return (
-    // 🛠️ FIX 1: Yahan 'dark:bg-slate-950' aur 'dark:text-slate-100' add kiya hai
-    <div className="absolute inset-0 flex flex-col bg-slate-50 dark:bg-slate-950 overflow-hidden text-slate-900 dark:text-slate-100 transition-colors duration-300">
-      
+    <div className="absolute inset-0 flex flex-col overflow-hidden bg-[#050816] text-slate-100">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.18),_transparent_32%),radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.16),_transparent_30%)]" />
+        <div className="absolute inset-0 opacity-40 [background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:48px_48px]" />
+      </div>
+
       <Navbar toggleSidebar={toggleSidebar} />
 
-      <div className="flex flex-1 w-full overflow-hidden relative">
+      <div className="relative flex flex-1 w-full overflow-hidden">
         <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
-        {/* 🛠️ FIX 2: Yahan '<main>' tag mein 'dark:bg-slate-900/50' add kiya hai */}
-        <main className="flex-1 h-full overflow-y-auto overflow-x-hidden bg-slate-50/50 dark:bg-slate-900/50">
-          <div className="w-full p-4 md:p-6 min-h-full">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden bg-transparent">
+          <div className="min-h-full w-full p-4 md:p-6">
             <Outlet />
           </div>
         </main>

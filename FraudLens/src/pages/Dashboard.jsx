@@ -1,182 +1,216 @@
 import React from "react";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Link as LinkIcon, MessageSquare, Upload, AlertTriangle } from "lucide-react";
-import { LineChart, Line, Tooltip, ResponsiveContainer } from 'recharts';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip } from "recharts";
+import {
+  Activity,
+  AlertTriangle,
+  BrainCircuit,
+  Globe2,
+  Link as LinkIcon,
+  MessageSquare,
+  Radar,
+  ScanSearch,
+  ShieldCheck,
+  Sparkles,
+  Upload,
+  Zap,
+} from "lucide-react";
+import MetricCard from "../components/dashboard/MetricCard";
+import AgentCard from "../components/dashboard/AgentCard";
+import ActivityItem from "../components/dashboard/ActivityItem";
+import InsightCard from "../components/dashboard/InsightCard";
+import QuickActionCard from "../components/dashboard/QuickActionCard";
 
-// --- MOCK DATA ---
 const trendData = [
-  { name: 'Jan', threats: 40 }, { name: 'Feb', threats: 30 },
-  { name: 'Mar', threats: 70 }, { name: 'Apr', threats: 45 },
-  { name: 'May', threats: 90 }, { name: 'Jun', threats: 65 },
-  { name: 'Jul', threats: 110 }
+  { name: "Mon", value: 24 },
+  { name: "Tue", value: 34 },
+  { name: "Wed", value: 28 },
+  { name: "Thu", value: 56 },
+  { name: "Fri", value: 48 },
+  { name: "Sat", value: 72 },
+  { name: "Sun", value: 64 },
+];
+
+const agents = [
+  { title: "URL Agent", status: "Monitoring live feeds", speed: 91, threats: 248, confidence: 97, icon: "url", accent: "cyan" },
+  { title: "Message Agent", status: "Scanning vectors", speed: 88, threats: 138, confidence: 95, icon: "message", accent: "emerald" },
+  { title: "Image AI", status: "Detecting fake QR", speed: 84, threats: 64, confidence: 93, icon: "image", accent: "violet" },
+  { title: "Threat Intel", status: "OSINT synced", speed: 96, threats: 311, confidence: 99, icon: "intel", accent: "rose" },
+];
+
+const quickActions = [
+  { title: "Scan URL", description: "Inspect domains and phishing infrastructure", icon: LinkIcon, accent: "cyan", to: "/app/dashboard/url" },
+  { title: "Paste Message", description: "Analyze SMS, email, and chat content", icon: MessageSquare, accent: "emerald", to: "/app/dashboard/message" },
+  { title: "Upload Screenshot", description: "Detect spoofed UI and QR overlays", icon: Upload, accent: "violet", to: "/app/dashboard/qr" },
+  { title: "Generate Report", description: "Export executive protection summary", icon: ScanSearch, accent: "rose", to: "/app/dashboard/report" },
+];
+
+const activityFeed = [
+  { title: "Blocked phishing website", time: "2 min ago", confidence: 98, severity: "critical", action: "Null routed and IOC added to blocklist", icon: "blocked" },
+  { title: "Safe URL verified", time: "7 min ago", confidence: 96, severity: "success", action: "No suspicious markers found in TLS and DNS context", icon: "safe" },
+  { title: "Suspicious QR detected", time: "14 min ago", confidence: 94, severity: "warning", action: "Visual spoofing pattern matched an impersonation campaign", icon: "scan" },
+  { title: "SMS classified as scam", time: "18 min ago", confidence: 97, severity: "info", action: "Urgency cues and impersonation language detected", icon: "insight" },
 ];
 
 export default function DashboardHome() {
   const navigate = useNavigate();
 
-  const quickActions = [
-    {
-      label: "Scan URL",
-      icon: LinkIcon,
-      color: "cyan",
-      onClick: () => navigate("/app/dashboard/url"),
-    },
-    {
-      label: "Paste Msg",
-      icon: MessageSquare,
-      color: "indigo",
-      onClick: () => navigate("/app/dashboard/message"),
-    },
-    {
-      label: "Upload Pic",
-      icon: Upload,
-      color: "emerald",
-      onClick: () => navigate("/app/dashboard/qr"),
-    },
-    {
-      label: "Report",
-      icon: AlertTriangle,
-      color: "red",
-      onClick: () => navigate("/app/dashboard/report"),
-    },
-  ];
-
   return (
-    // 🛠️ FIX 1: Added pb-8 (padding-bottom) to prevent layout shifting at the very bottom
-    <div className="max-w-7xl mx-auto space-y-6 text-slate-900 pb-8">
-      
-      {/* Top Banner Row */}
-      <div className="flex flex-col xl:flex-row gap-6">
-        <div className="flex-1 bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div>
-            <h1 className="text-2xl font-black text-slate-900 mb-4">Protected by Autonomous AI Agents</h1>
-            <div className="flex flex-wrap gap-8">
-              <div>
-                <p className="text-sm text-slate-500 font-medium mb-1">Total Scans Today</p>
-                <p className="text-4xl font-bold text-cyan-500">1,245</p>
+    <div className="mx-auto flex max-w-7xl flex-col gap-6 pb-8 text-slate-100">
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45 }}
+        className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.2),transparent_40%),linear-gradient(135deg,rgba(15,23,42,0.96),rgba(2,6,23,0.96))] p-6 shadow-[0_35px_120px_-30px_rgba(0,0,0,0.85)]"
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.12)_1px,transparent_0)] bg-size-[24px_24px] opacity-40" />
+        <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-cyan-400/20 blur-[120px]" />
+        <div className="absolute bottom-0 left-0 h-48 w-48 rounded-full bg-violet-500/20 blur-[120px]" />
+
+        <div className="relative flex flex-col gap-8 xl:flex-row xl:items-center xl:justify-between">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-sm text-cyan-200">
+              <span className="h-2 w-2 rounded-full bg-cyan-400" />
+              Good Evening Vinayak 👋
+            </div>
+            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+              FraudLens AI is actively protecting your digital ecosystem.
+            </h1>
+            <p className="mt-4 max-w-xl text-base leading-7 text-slate-400">
+              Multi-agent intelligence is monitoring trust signals, phishing infrastructure, and suspicious behavior in real time.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-3">
+                <p className="text-sm text-slate-400">Protected</p>
+                <p className="text-lg font-semibold text-emerald-300">AI Status • Secure</p>
               </div>
-              <div>
-                <p className="text-sm text-slate-500 font-medium mb-1">Threats Blocked</p>
-                <p className="text-4xl font-bold text-red-500">88</p>
-              </div>
-              <div>
-                <p className="text-sm text-slate-500 font-medium mb-1">High Risk Alerts</p>
-                <p className="text-4xl font-bold text-indigo-500">12</p>
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-3">
+                <p className="text-sm text-slate-400">Threat Level</p>
+                <p className="text-lg font-semibold text-cyan-300">Low • Active</p>
               </div>
             </div>
           </div>
-          <div className="bg-slate-50 border border-slate-100 p-4 rounded-xl flex items-center gap-4 min-w-[200px]">
-            <div className="w-14 h-14 rounded-full border-4 border-slate-900 flex items-center justify-center font-bold text-xl">A+</div>
+
+          <div className="relative flex min-h-62.5 items-center justify-center">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="absolute h-48 w-48 rounded-full border border-cyan-400/20"
+            />
+            <motion.div
+              animate={{ scale: [1, 1.04, 1] }}
+              transition={{ duration: 2.6, repeat: Infinity }}
+              className="flex h-40 w-40 items-center justify-center rounded-full border border-cyan-400/30 bg-[radial-gradient(circle,rgba(6,182,212,0.28),rgba(2,6,23,0.75))] shadow-[0_0_80px_rgba(6,182,212,0.3)]"
+            >
+              <div className="text-center">
+                <p className="text-5xl font-semibold text-white">94</p>
+                <p className="mt-1 text-sm uppercase tracking-[0.25em] text-cyan-300">Security Score</p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </motion.section>
+
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <MetricCard title="Total Scans" value={15420} change={12} icon={ScanSearch} accent="cyan" />
+        <MetricCard title="Threats Blocked" value={1248} change={18} icon={ShieldCheck} accent="emerald" />
+        <MetricCard title="Safe URLs" value={14890} change={14} icon={Globe2} accent="purple" />
+        <MetricCard title="High Risk Alerts" value={84} change={9} icon={AlertTriangle} accent="red" />
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-[1.35fr_0.9fr]">
+        <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 backdrop-blur-xl">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-slate-500 font-medium">Security Score</p>
-              <p className="text-2xl font-bold text-emerald-600">94<span className="text-sm text-slate-400">/100</span></p>
+              <p className="text-sm text-slate-400">Live AI Agents</p>
+              <h2 className="text-xl font-semibold text-white">Autonomous detection layer</h2>
+            </div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-sm text-emerald-300">
+              <Zap size={14} />
+              Active now
             </div>
           </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="w-full xl:w-72 space-y-3">
-          <h3 className="text-sm font-bold text-slate-900">Quick Actions</h3>
-          <div className="grid grid-cols-2 gap-3">
-            {quickActions.map((action) => {
-              const Icon = action.icon;
-              const colorClasses = {
-                cyan: "bg-cyan-50 border-cyan-200 text-cyan-700 hover:bg-cyan-100",
-                indigo: "bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100",
-                emerald: "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100",
-                red: "bg-red-50 border-red-200 text-red-700 hover:bg-red-100",
-              };
-
-              return (
-                <button
-                  key={action.label}
-                  onClick={action.onClick}
-                  className={`flex flex-col items-center justify-center p-3 border rounded-xl transition-colors ${colorClasses[action.color]}`}
-                >
-                  <Icon size={18} className="mb-1" />
-                  <span className="text-xs font-bold">{action.label}</span>
-                </button>
-              );
-            })}
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            {agents.map((agent) => (
+              <AgentCard key={agent.title} {...agent} />
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* Sub Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: "Total Scans", value: "15K+", color: "text-indigo-600", bg: "bg-indigo-50" },
-          { label: "Scam Detected", value: "342", color: "text-red-600", bg: "bg-red-50" },
-          { label: "Safe Links", value: "14.6K+", color: "text-emerald-600", bg: "bg-emerald-50" },
-          { label: "Risk Level", value: "Low", color: "text-emerald-600", bg: "bg-emerald-50" }
-        ].map((stat, i) => (
-          <div key={i} className="bg-white border border-slate-200 p-4 rounded-2xl flex justify-between items-center shadow-sm">
+        <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 backdrop-blur-xl">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-slate-500 font-medium mb-1">{stat.label}</p>
-              <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+              <p className="text-sm text-slate-400">Threat Trend</p>
+              <h2 className="text-xl font-semibold text-white">Weekly signal strength</h2>
             </div>
-            <div className={`text-[10px] font-bold px-2 py-1 rounded-md ${stat.bg} ${stat.color}`}>
-              {stat.value}
-            </div>
+            <div className="rounded-full border border-white/10 bg-slate-950/70 px-3 py-1 text-sm text-slate-400">Updated now</div>
           </div>
-        ))}
-      </div>
-
-      {/* CHARTS ROW */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column Data Feed / Table etc */}
-        <div className="space-y-6 lg:col-span-2">
-          {/* Recent Scans Table */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm overflow-x-auto">
-            <h3 className="font-bold text-slate-900 mb-4">Recent Scans</h3>
-            <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead>
-                <tr className="text-slate-500 border-b border-slate-100">
-                  <th className="pb-3 font-medium">Type</th>
-                  <th className="pb-3 font-medium">Threat</th>
-                  <th className="pb-3 font-medium">Risk Score</th>
-                  <th className="pb-3 font-medium">Time</th>
-                  <th className="pb-3 font-medium">Status</th>
-                </tr>
-              </thead>
-              <tbody className="text-slate-700">
-                {[
-                  { type: "URL", threat: "Phishing", score: "92", status: "Safe", color: "bg-emerald-100 text-emerald-700" },
-                  { type: "Scam", threat: "Phishing", score: "92", status: "BLOCKED", color: "bg-red-100 text-red-700" }
-                ].map((row, i) => (
-                  <tr key={i} className="border-b border-slate-50 last:border-0">
-                    <td className="py-3 font-medium">{row.type}</td>
-                    <td className="py-3">{row.threat}</td>
-                    <td className="py-3">{row.score}</td>
-                    <td className="py-3 text-slate-500">2m ago</td>
-                    <td className="py-3">
-                      <span className={`text-[10px] font-bold px-2 py-1 rounded ${row.color}`}>{row.status}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-5 h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={trendData}>
+                <defs>
+                  <linearGradient id="threatGradient" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.55} />
+                    <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.04} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid stroke="rgba(255,255,255,0.08)" vertical={false} />
+                <Tooltip cursor={{ stroke: "rgba(255,255,255,0.15)" }} contentStyle={{ background: "#020617", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12 }} />
+                <Area type="monotone" dataKey="value" stroke="#22d3ee" fill="url(#threatGradient)" strokeWidth={3} />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
+      </section>
 
-        {/* Right Column Charts */}
+      <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+        <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 backdrop-blur-xl">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-slate-400">Live Activity Feed</p>
+              <h2 className="text-xl font-semibold text-white">Real-time response stream</h2>
+            </div>
+            <div className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-sm text-cyan-300">Streaming</div>
+          </div>
+          <ul className="mt-5 space-y-3">
+            {activityFeed.map((item) => (
+              <ActivityItem key={item.title} {...item} />
+            ))}
+          </ul>
+        </div>
+
         <div className="space-y-6">
-           <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-            <h3 className="font-bold text-slate-900 text-sm mb-1">Threat Detection Trend</h3>
-            <p className="text-xs text-slate-500 mb-4">Past 6 months activity</p>
-            {/* 🛠️ FIX 2: Replaced plain h-40 with a strictly locked wrapper (h-[200px] w-full min-h-0) to stop Recharts from expanding */}
-            <div className="h-[200px] w-full min-h-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={trendData}>
-                  <Line type="monotone" dataKey="threats" stroke="#06b6d4" strokeWidth={3} dot={false} />
-                  <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                </LineChart>
-              </ResponsiveContainer>
+          <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 backdrop-blur-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-400">AI Insights</p>
+                <h2 className="text-xl font-semibold text-white">Context-aware recommendations</h2>
+              </div>
+              <div className="rounded-full border border-white/10 bg-slate-950/70 px-3 py-1 text-sm text-slate-400">Next 24h</div>
+            </div>
+            <div className="mt-5 grid gap-4">
+              <InsightCard title="An unusual increase in phishing attempts has been detected." body="Credential harvesting infrastructure is climbing in targeted sectors with synthetic brand impersonation." confidence={98} icon="insight" />
+              <InsightCard title="Users clicking shortened URLs increased by 23%." body="The signal suggests a rise in mobile-first lure campaigns and redirect abuse." confidence={93} icon="risk" />
+              <InsightCard title="High probability of banking phishing campaigns during the next 24 hours." body="Recommendations: tighten MFA prompts and notify high-risk segments immediately." confidence={96} icon="forecast" />
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 backdrop-blur-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-400">Quick Actions</p>
+                <h2 className="text-xl font-semibold text-white">Escalate in one tap</h2>
+              </div>
+            </div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {quickActions.map((action) => (
+                <QuickActionCard key={action.title} {...action} onClick={() => navigate(action.to)} />
+              ))}
             </div>
           </div>
         </div>
-      </div>
-
+      </section>
     </div>
   );
 }
