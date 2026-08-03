@@ -324,7 +324,7 @@ export default function Landing() {
                 <Cpu size={20} className="text-blue-500" /> Google Gemini API
               </span>
               <span className="flex items-center gap-2">
-                <Lock size={20} className="text-emerald-500" /> Supabase
+                <Lock size={20} className="text-emerald-500" /> Firebase
               </span>
               <span className="flex items-center gap-2">
                 <Zap size={20} className="text-teal-500" /> FastAPI

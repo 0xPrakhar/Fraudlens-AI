@@ -195,7 +195,7 @@ Features include:
 
                    ▼
 
-      Save History in Supabase
+      Save History in Firebase
 
                    │
 

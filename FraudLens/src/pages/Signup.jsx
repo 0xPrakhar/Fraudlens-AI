@@ -17,6 +17,7 @@ import {
   EyeOff,
   User,
 } from "lucide-react";
+import { getAuthErrorMessage } from "../utils/authErrorMessages";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -56,7 +57,7 @@ export default function Signup() {
       const username = email.split('@')[0];
       navigate(`/app/dashboard`);
     } catch (err) {
-      setError(err.message);
+      setError(getAuthErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -70,7 +71,7 @@ export default function Signup() {
       const username = result.user.email.split('@')[0];
       navigate(`/${username}/dashboard`);
     } catch (err) {
-      setError(err.message);
+      setError(getAuthErrorMessage(err));
     }
   }
 
