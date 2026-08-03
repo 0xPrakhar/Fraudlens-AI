@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Link as LinkIcon, MessageSquare, Upload, AlertTriangle } from "lucide-react";
 import { LineChart, Line, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -11,6 +12,35 @@ const trendData = [
 ];
 
 export default function DashboardHome() {
+  const navigate = useNavigate();
+
+  const quickActions = [
+    {
+      label: "Scan URL",
+      icon: LinkIcon,
+      color: "cyan",
+      onClick: () => navigate("/app/dashboard/url"),
+    },
+    {
+      label: "Paste Msg",
+      icon: MessageSquare,
+      color: "indigo",
+      onClick: () => navigate("/app/dashboard/message"),
+    },
+    {
+      label: "Upload Pic",
+      icon: Upload,
+      color: "emerald",
+      onClick: () => navigate("/app/dashboard/qr"),
+    },
+    {
+      label: "Report",
+      icon: AlertTriangle,
+      color: "red",
+      onClick: () => navigate("/app/dashboard/report"),
+    },
+  ];
+
   return (
     // 🛠️ FIX 1: Added pb-8 (padding-bottom) to prevent layout shifting at the very bottom
     <div className="max-w-7xl mx-auto space-y-6 text-slate-900 pb-8">
@@ -48,22 +78,26 @@ export default function DashboardHome() {
         <div className="w-full xl:w-72 space-y-3">
           <h3 className="text-sm font-bold text-slate-900">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-3">
-            <button className="flex flex-col items-center justify-center p-3 bg-cyan-50 border border-cyan-200 text-cyan-700 rounded-xl hover:bg-cyan-100 transition-colors">
-              <LinkIcon size={18} className="mb-1" />
-              <span className="text-xs font-bold">Scan URL</span>
-            </button>
-            <button className="flex flex-col items-center justify-center p-3 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-xl hover:bg-indigo-100 transition-colors">
-              <MessageSquare size={18} className="mb-1" />
-              <span className="text-xs font-bold">Paste Msg</span>
-            </button>
-            <button className="flex flex-col items-center justify-center p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl hover:bg-emerald-100 transition-colors">
-              <Upload size={18} className="mb-1" />
-              <span className="text-xs font-bold">Upload Pic</span>
-            </button>
-            <button className="flex flex-col items-center justify-center p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl hover:bg-red-100 transition-colors">
-              <AlertTriangle size={18} className="mb-1" />
-              <span className="text-xs font-bold">Report</span>
-            </button>
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+              const colorClasses = {
+                cyan: "bg-cyan-50 border-cyan-200 text-cyan-700 hover:bg-cyan-100",
+                indigo: "bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100",
+                emerald: "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100",
+                red: "bg-red-50 border-red-200 text-red-700 hover:bg-red-100",
+              };
+
+              return (
+                <button
+                  key={action.label}
+                  onClick={action.onClick}
+                  className={`flex flex-col items-center justify-center p-3 border rounded-xl transition-colors ${colorClasses[action.color]}`}
+                >
+                  <Icon size={18} className="mb-1" />
+                  <span className="text-xs font-bold">{action.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

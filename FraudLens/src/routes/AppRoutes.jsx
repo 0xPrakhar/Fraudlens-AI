@@ -48,6 +48,7 @@ import ScanCenter from "../services/ScanCenter";
 import UrlScanner from "../services/UrlScanner";
 import MessageScanner from "../services/MessageScanner";
 import QrScanner from "../services/QrScanner";
+import Report from "../pages/Report";
 // import History from "../pages/History";
 
 
@@ -71,6 +72,7 @@ export default function AppRoutes() {
         <Route path="settings" element={<Settings />} />
         <Route path="message" element={<MessageScanner />} />
         <Route path="qr" element={<QrScanner />} />
+        <Route path="report" element={<Report />} />
         {/* <Route path="History" element={<History />} /> */}
 
         {/* 
