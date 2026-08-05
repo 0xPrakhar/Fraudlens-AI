@@ -15,11 +15,13 @@ export const verifyFirebaseUser = async (req, res, next) => {
             throw new ApiError(401, "Unauthorized");
         }
 
-        // Extract Firebase ID Token
-        const idToken = authHeader.split(" ")[1];
+      console.log("Authorization Header:", req.headers.authorization);
 
-        // Verify Firebase Token
-        const decodedToken = await auth.verifyIdToken(idToken);
+const idToken = authHeader.split(" ")[1];
+console.log("Token received:", idToken.substring(0, 20) + "...");
+
+const decodedToken = await auth.verifyIdToken(idToken);
+console.log("Decoded Token:", decodedToken);
 
         // Find user in MongoDB
         let user = await User.findOne({
