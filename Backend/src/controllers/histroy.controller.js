@@ -1,7 +1,7 @@
 import { ScanHistory } from "../models/scanHistory.model.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError } from "../utiles/ApiError.js";
+import { ApiResponse } from "../utiles/ApiRespone.js";
+import { asyncHandler } from "../utiles/asyncHandler.js";
 
 // Get all history
 export const getAllHistory = asyncHandler(async (req, res) => {

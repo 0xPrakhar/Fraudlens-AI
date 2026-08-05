@@ -1,1 +1,23 @@
-/FraudLens - Backend
+# Dependencies
+/node_modules
+/Backend/node_modules
+/FraudLens/node_modules
+
+# Environment variables - NEVER commit these
+.env
+.env.*
+!.env.example
+
+# Firebase service account key - NEVER commit this
+/Backend/src/config/serviceAccountKey.json
+
+# Build output
+/FraudLens/dist
+
+# Logs
+logs
+*.log
+
+# IDE / OS files
+.DS_Store
+.idea/

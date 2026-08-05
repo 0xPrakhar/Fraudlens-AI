@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { verifyFirebaseUser } from "../middlewares/auth.middleware.js";
+import {verifyFirebaseUser} from '../middleware/auth.middlewar.js'
 import {
     getAllHistory,
     getHistoryById,
     deleteHistory,
-} from "../controllers/history.controller.js";
+} from '../controllers/histroy.controller.js'
 
 const historyRoutes = Router();
 
