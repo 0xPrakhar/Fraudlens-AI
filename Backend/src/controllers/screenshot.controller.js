@@ -26,8 +26,22 @@ export const screenshotScanner = asyncHandler(async (req, res) => {
     const result = await scanScreenShot(uploadedImage.secure_url);
 
     // Step 4: Save history
-    
-    
+await saveScanHistory({
+    user: req.user._id,
+    scanType: "image",
+
+    // Text extracted from OCR
+    input: text,
+
+    // Original uploaded image
+    image: {
+        url: uploadResponse.imageUrl,
+        publicId: uploadResponse.publicId,
+    },
+
+    // AI analysis result
+    result: response,
+});
 
     // Step 5: Return response
     return res.status(200).json(
