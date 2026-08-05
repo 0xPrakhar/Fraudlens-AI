@@ -92,6 +92,15 @@ export default function Landing() {
     }, 2000);
   };
 
+  const scrollToFeatures = () => {
+    const featuresSection = document.getElementById("Features");
+    if (featuresSection) {
+      const offset = 90;
+      const top = featuresSection.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
+  };
+
   return (
     <div className={mounted && isDark ? "dark" : ""}>
       <div className="min-h-screen bg-slate-50 dark:bg-[#0B1120] text-slate-900 dark:text-white overflow-x-hidden transition-colors duration-500 font-sans">
@@ -158,7 +167,7 @@ export default function Landing() {
 
                 <button
                   type="button"
-                  onClick={(e) => e.preventDefault()}
+                  onClick={scrollToFeatures}
                   className="text-sm font-semibold text-slate-600 hover:text-blue-600 dark:text-slate-300 mr-4"
                 >
                   Features
@@ -324,7 +333,7 @@ export default function Landing() {
                 <Cpu size={20} className="text-blue-500" /> Google Gemini API
               </span>
               <span className="flex items-center gap-2">
-                <Lock size={20} className="text-emerald-500" /> Supabase
+                <Lock size={20} className="text-emerald-500" /> Firebase
               </span>
               <span className="flex items-center gap-2">
                 <Zap size={20} className="text-teal-500" /> FastAPI

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase/firebase";
 import {
   Menu,
   Search,
@@ -22,6 +24,7 @@ export default function Navbar({ toggleSidebar }) {
   // States for Dropdown
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [user, setUser] = useState(null);
 
   // Dropdown ko bahar click karne par band karne ke liye Ref
   const dropdownRef = useRef(null);
@@ -29,6 +32,14 @@ export default function Navbar({ toggleSidebar }) {
   // Mount check for theme
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -41,8 +52,9 @@ export default function Navbar({ toggleSidebar }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const displayName = "User";
-  const displayInitial = displayName.charAt(0).toUpperCase();
+  const displayName = user?.displayName || user?.email?.split("@")[0] || "User";
+  const displayEmail = user?.email || "No email available";
+  const displayInitial = (displayName.charAt(0) || "U").toUpperCase();
   const isDark = mounted && theme === "dark";
 
   // Logout Handler - TODO: Add Firebase signOut when auth is configured
@@ -167,7 +179,7 @@ export default function Navbar({ toggleSidebar }) {
               <span
                 className={`text-[10px] font-semibold uppercase tracking-wider ${isDark ? "text-slate-400" : "text-slate-500"}`}
               >
-                Pro Plan
+                {displayEmail}
               </span>
             </div>
 
@@ -200,7 +212,7 @@ export default function Navbar({ toggleSidebar }) {
                 <p
                   className={`text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}
                 >
-                  Pro Plan Member
+                  {displayEmail}
                 </p>
               </div>
 
