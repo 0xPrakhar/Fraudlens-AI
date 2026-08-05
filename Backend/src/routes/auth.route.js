@@ -1,7 +1,7 @@
 // src/routes/auth.route.js
 import express from "express";
 import { verifyFirebaseUser } from "../middleware/auth.middlewar.js"; 
-import User from "../models/user.model.js"; 
+import {User} from "../models/user.model.js"; 
 
 const authrouter = express.Router();
 
