@@ -18,7 +18,7 @@ export const verifyFirebaseUser = async (req, res, next) => {
         const idToken = authHeader.split(" ")[1];
 
         // Verify Firebase Token
-        const decodedToken = await auth.verifyIdToken(idtoken);
+        const decodedToken = await auth.verifyIdToken(idToken);
 
         // Find user in MongoDB
         let user = await User.findOne({
