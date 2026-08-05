@@ -5,7 +5,7 @@ import ScreenShotRoutes from "./src/routes/screenshot.route.js";
 import historyRoutes from './src/routes/history.route.js'
 import cors from "cors";
 import cookieParser from "cookie-parser";
-
+import authrouter from './src/routes/auth.route.js'
 
 const app = express();
 
@@ -41,6 +41,7 @@ app.use('/api/v1/url',urlRoutes)
 app.use('/api/v1/text',textRoutes)
 app.use('/api/v1/screenshot',ScreenShotRoutes)
 app.use('/api/v1/history',historyRoutes)
+app.use('/api/v1/auth',authrouter)
 
 
 export default app;
