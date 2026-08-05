@@ -55,13 +55,14 @@ export const verifyFirebaseUser = async (req, res, next) => {
     console.error(error);
 
     // Firebase authentication error
-    if (
-      error.code?.startsWith("auth/") ||
-      error.code === "auth/id-token-expired" ||
-      error.code === "auth/argument-error"
-    ) {
-      return next(new ApiError(401, "Invalid or expired Firebase token"));
-    }
+   if (
+  typeof error.code === "string" &&
+  error.code.startsWith("auth/")
+) {
+  return next(new ApiError(401, "Invalid or expired Firebase token"));
+}
+
+return next(error);
 
     // Pass every other error to the global error handler
     return next(error);
