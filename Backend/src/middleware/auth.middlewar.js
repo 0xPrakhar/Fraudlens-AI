@@ -9,6 +9,7 @@ export const verifyFirebaseUser = async (req, res, next) => {
 
         // Get Authorization header
         const authHeader = req.headers.authorization;
+        console.log(authHeader)
 
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             throw new ApiError(401, "Unauthorized");
