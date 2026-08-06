@@ -24,7 +24,7 @@ export const screenshotScanner = asyncHandler(async (req, res) => {
 
     // Step 3: Analyze screenshot
     const result = await scanScreenShot(uploadedImage.secure_url);
-    console.log(result)
+    // console.log(result)
 
     // Step 4: Save history
 await saveScanHistory({
@@ -36,8 +36,8 @@ await saveScanHistory({
 
     // Original uploaded image
     image: {
-        url: uploadResponse.imageUrl,
-        publicId: uploadResponse.publicId,
+        url: uploadedImage.imageUrl,
+        publicId: uploadedImage.publicId,
     },
 
     // AI analysis result
