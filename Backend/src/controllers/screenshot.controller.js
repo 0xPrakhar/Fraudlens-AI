@@ -24,6 +24,7 @@ export const screenshotScanner = asyncHandler(async (req, res) => {
 
     // Step 3: Analyze screenshot
     const result = await scanScreenShot(uploadedImage.secure_url);
+    console.log(result)
 
     // Step 4: Save history
 await saveScanHistory({
