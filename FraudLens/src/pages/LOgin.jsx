@@ -15,6 +15,7 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
+import { getAuthErrorMessage } from "../utils/authErrorMessages";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -36,7 +37,7 @@ export default function Login() {
     
       navigate(`/app/dashboard`);
     } catch (err) {
-      setError(err.message);
+      setError(getAuthErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -49,7 +50,7 @@ export default function Login() {
      
       navigate(`/app/dashboard`);
     } catch (err) {
-      setError(err.message || "Google Login Failed");
+      setError(getAuthErrorMessage(err));
     }
   }
 

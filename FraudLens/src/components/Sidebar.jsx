@@ -38,12 +38,11 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
   return (
     <aside
-      // 🛠️ FIX 3: Close hone par w-20 (Icon only) hoga. Navbar ke niche aayega isliye absolute/fixed hata diya.
       className={`relative z-20 transition-all duration-300 ease-in-out flex flex-col shrink-0 h-full ${
         isOpen ? "w-64" : "w-20"
       } ${
-        isDark ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200"
-      } border-r`}
+        isDark ? "bg-slate-900 border-slate-800" : "bg-white/90 border-slate-200"
+      } border-r backdrop-blur-xl`}
     >
       {/* 🛠️ FIX 4: Scrollbar Hide Classes ([&::-webkit-scrollbar]:hidden) */}
       <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
