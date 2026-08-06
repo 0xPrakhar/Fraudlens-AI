@@ -145,6 +145,11 @@ export default function DashboardHome() {
               </p>
             </div>
           </div>
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            {agents.map((agent) => (
+              <AgentCard key={agent.title} {...agent} />
+            ))}
+          </div>
         </div>
 
         {/* Real-time Stat Pills Inside Banner */}

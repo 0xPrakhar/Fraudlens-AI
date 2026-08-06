@@ -1,7 +1,7 @@
-import { ApiError } from "../utils/ApiError.js";
+import { ApiError } from "../utiles/ApiError.js";
 import {promptForText} from '../prompt/promptText.js'
 import { z } from "zod";
-import { openRouterClient } from "../config/openRouter.js";
+import  openRouterClient  from "../config/openRouterClient.js";
 
 
 
@@ -100,6 +100,7 @@ export const scanText = async (text) => {
             ],
 
             temperature: 0.2,
+            max_tokens: 1500,
         });
 
 
@@ -142,7 +143,7 @@ export const scanText = async (text) => {
 
         // Step 7: Validate AI output
         const validation =
-            urlThreatSchema.safeParse(parsedResponse);
+            textThreatSchema.safeParse(parsedResponse);
 
 
 

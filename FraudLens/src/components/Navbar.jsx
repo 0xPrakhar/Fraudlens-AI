@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase/firebase";
 import {
   Menu,
   Search,
@@ -20,6 +22,7 @@ export default function Navbar({ toggleSidebar }) {
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+
   const dropdownRef = useRef(null);
 
   const currentUser = auth.currentUser;
@@ -29,6 +32,14 @@ export default function Navbar({ toggleSidebar }) {
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -174,7 +185,7 @@ export default function Navbar({ toggleSidebar }) {
                 <p
                   className={`text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}
                 >
-                  Pro Plan Member
+                  {displayEmail}
                 </p>
               </div>
 

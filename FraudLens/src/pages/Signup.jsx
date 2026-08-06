@@ -17,6 +17,7 @@ import {
   EyeOff,
   User,
 } from "lucide-react";
+import { getAuthErrorMessage } from "../utils/authErrorMessages";
 
 export default function Signup() {
   const navigate = useNavigate();

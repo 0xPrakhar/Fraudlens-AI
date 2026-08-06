@@ -1,13 +1,15 @@
-import {scanScreenShot} from '../services/screenshot.service.js';
-import {ApiError} from '../utiles/ApiError.js'
-import {ApiResponse} from '../utiles/ApiRespone.js'
-import {asyncHandler} from '../utiles/asyncHandler.js'
+import { scanScreenShot } from "../services/screenshot.service.js";
+import { saveScanHistory } from "../services/history.service.js";
+import { uploadOnCloudinary } from "../utiles/Cloudnary.js";
+import { ApiError } from "../utiles/ApiError.js";
+import { ApiResponse } from "../utiles/ApiRespone.js";
+import { asyncHandler } from "../utiles/asyncHandler.js";
 
-
- const screenshotScanner = asyncHandler(async (req, res) => {
+export const screenshotScanner = asyncHandler(async (req, res) => {
 
     // Step 1: Get uploaded file
     const imagePath = req.file?.path;
+
 
     if (!imagePath) {
         throw new ApiError(400, "Screenshot is required");
@@ -22,23 +24,40 @@ import {asyncHandler} from '../utiles/asyncHandler.js'
 
     // Step 3: Analyze screenshot
     const result = await scanScreenShot(uploadedImage.secure_url);
+    // console.log(result)
 
-    // Step 4: (Optional) Save scan history here
+    // Step 4: Save history
+await saveScanHistory({
+    user: req.user._id,
+    scanType: "image",
+
+    // Text extracted from OCR
+    input: result.reasons[0].description || "text is not aviable ",
+
+    // Original uploaded image
+    image: {
+        url: uploadedImage.imageUrl,
+        publicId: uploadedImage.publicId,
+    },
+
+    // AI analysis result
+    result: result,
+});
 
     // Step 5: Return response
     return res.status(200).json(
         new ApiResponse(
             200,
-           {
-    screenshot: {
-        imageUrl: uploadedImage.secure_url,
-        publicId: uploadedImage.public_id
-    },
-    analysis: result
-},
+            {
+                screenshot: {
+                    imageUrl: uploadedImage.secure_url,
+                    publicId: uploadedImage.public_id,
+                },
+                analysis: result,
+            },
             "Screenshot analyzed successfully"
         )
     );
 });
 
-export default scanScreenShot;
+export default screenshotScanner;
