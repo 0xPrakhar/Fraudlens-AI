@@ -32,7 +32,7 @@ await saveScanHistory({
     scanType: "image",
 
     // Text extracted from OCR
-    input: text,
+    input: result.reasons[0].description || "text is not aviable ",
 
     // Original uploaded image
     image: {
@@ -41,7 +41,7 @@ await saveScanHistory({
     },
 
     // AI analysis result
-    result: response,
+    result: result,
 });
 
     // Step 5: Return response
