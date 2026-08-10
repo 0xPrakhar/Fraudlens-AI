@@ -3,12 +3,13 @@ import {upload} from "../middleware/multer.middleware.js"
 import screenshotScanner from '../controllers/screenshot.controller.js'
 const ScreenShotRoutes = Router()
 
-
+import { verifyFirebaseUser } from "../middlewares/auth.middleware.js";
 
 
 
 ScreenShotRoutes.post(
-    "/scan-screenshot",
+    "/image",
+    verifyFirebaseUser,
     upload.single("image"),
     screenshotScanner
 );
