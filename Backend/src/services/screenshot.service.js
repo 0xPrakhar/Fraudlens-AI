@@ -1,7 +1,7 @@
-import { ApiError } from "../utils/ApiError.js";
+import { ApiError } from "../utiles/ApiError.js";
 import { getImageScannerPrompt } from "../prompt/promptImage.js";
-
-import { openRouterClient } from "../config/openRouter.js";
+import { z } from "zod";
+import openRouterClient  from "../config/openRouterClient.js";
 
 // Validate Cloudinary image URL
 function isValidImageUrl(url) {
@@ -124,6 +124,7 @@ export const scanScreenShot = async (imageUrl) => {
                 ],
 
                 temperature: 0.2,
+                max_tokens: 1500,
             });
 
         // Step 4: Extract AI Response

@@ -1,12 +1,12 @@
 import { Router } from "express";
 const urlRoutes = Router()
-import { verifyFirebaseUser } from "../middlewares/auth.middleware.js";
+import {verifyFirebaseUser} from "../middleware/auth.middlewar.js";
 import {urlScanner} from "../controllers/url.controller.js"
 
 
 
-router.post(
-    "/url",
+urlRoutes.post(
+    "/scan",
     verifyFirebaseUser,
     urlScanner
 );
