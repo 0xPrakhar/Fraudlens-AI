@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { QrCode, Upload, Activity, XCircle, CheckCircle } from "lucide-react";
+import {
+  QrCode,
+  Upload,
+  Activity,
+  XCircle,
+  CheckCircle,
+} from "lucide-react";
 
 export default function QrScanner() {
   const [isScanning, setIsScanning] = useState(false);
@@ -14,16 +20,15 @@ export default function QrScanner() {
     setResult(null);
     setError(null);
 
-    // FormData banayein kyunki backend multer (upload.single("image")) use kar raha hai
     const formData = new FormData();
     formData.append("image", file);
 
     try {
-      // Apne backend API endpoint par request bhejein
-      const response = await fetch("https://fraudlens-ai-6wqt.onrender.com/api/v1/qr/scan", {
+      // Yahan env variable use karein, jo Render backend URL uthayega
+      const API_Base = import.meta.env.VITE_API_BASE_URL;
+
+      const response = await fetch(`${API_Base}/api/v1/qr/scan`, {
         method: "POST",
-        // Agar aap Firebase auth token bhej rahe hain toh headers mein Authorization add kar sakte hain:
-        // headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 
@@ -33,10 +38,7 @@ export default function QrScanner() {
         throw new Error(data.message || "Failed to scan QR code");
       }
 
-      // Console mein poora response print karein taaki aap structure dekh sakein
       console.log("=== QR SCAN BACKEND RESPONSE ===", data);
-
-      // State mein result set karein (data.data.analysis ke hisaab se)
       setResult(data.data);
     } catch (err) {
       console.error("QR Scan Error:", err);
@@ -56,7 +58,6 @@ export default function QrScanner() {
         </h1>
         <p className="text-slate-500 dark:text-slate-400 mt-3 text-sm max-w-lg">
           Upload a QR code image to inspect its destination before scanning.
-          Powered by FraudLens AI Backend.
         </p>
       </div>
 
@@ -83,8 +84,7 @@ export default function QrScanner() {
 
         {isScanning && (
           <div className="mt-8 flex items-center gap-3 text-cyan-600 dark:text-cyan-400 font-bold">
-            <Activity className="animate-spin" /> Analyzing QR via Backend &
-            AI...
+            <Activity className="animate-spin" /> Analyzing QR via Backend & AI...
           </div>
         )}
 
@@ -95,7 +95,7 @@ export default function QrScanner() {
         )}
       </div>
 
-      {/* RESULT SECTION (Abhi ke liye basic layout, console mein poora data aayega) */}
+      {/* RESULT SECTION */}
       {result && !isScanning && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
           <div className="p-6 rounded-3xl border bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800">
@@ -115,10 +115,9 @@ export default function QrScanner() {
               </div>
             </div>
 
-            {/* JSON view taaki aapko aur details pata chalein ki backend kya bhej raha hai */}
             <div className="mt-6 bg-black/5 dark:bg-black/40 p-4 rounded-xl overflow-x-auto">
               <p className="text-xs font-bold text-slate-400 mb-2 uppercase">
-                Raw Analysis Data (Check Console for full details):
+                Raw Analysis Data:
               </p>
               <pre className="text-xs font-mono text-cyan-300">
                 {JSON.stringify(result.analysis, null, 2)}
