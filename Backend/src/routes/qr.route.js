@@ -10,7 +10,7 @@ import {verifyFirebaseUser} from "../middleware/auth.middlewar.js";
 
 QrRoutes.post(
     "/scan",
-    // verifyFirebaseUser,
+    verifyFirebaseUser,
     upload.single("image"),
     qrScanner
 );
