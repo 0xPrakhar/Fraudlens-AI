@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import {
   QrCode,
   Upload,
-  ArrowRight,
   Activity,
-  ShieldCheck,
   XCircle,
   CheckCircle,
 } from "lucide-react";
