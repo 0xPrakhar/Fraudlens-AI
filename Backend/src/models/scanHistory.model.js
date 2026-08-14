@@ -10,7 +10,7 @@ const scanHistorySchema = new mongoose.Schema(
 
     scanType: {
       type: String,
-      enum: ["url", "text", "image"],
+      enum: ["url", "text", "image","qr"],
       required: true,
     },
 
