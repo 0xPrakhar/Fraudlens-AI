@@ -20,7 +20,7 @@ export default function QrScanner() {
 
     try {
       // Apne backend API endpoint par request bhejein
-      const response = await fetch("http://localhost:5000/api/v1/qr/scan", {
+      const response = await fetch("https://fraudlens-ai-6wqt.onrender.com/api/v1/qr/scan", {
         method: "POST",
         // Agar aap Firebase auth token bhej rahe hain toh headers mein Authorization add kar sakte hain:
         // headers: { Authorization: `Bearer ${token}` },
