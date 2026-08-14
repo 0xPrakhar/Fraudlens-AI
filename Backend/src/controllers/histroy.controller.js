@@ -63,3 +63,16 @@ export const deleteHistory = asyncHandler(async (req, res) => {
         )
     );
 });
+
+// export deleteUser= asyncHandler(()=>{
+//      const { id } = req.params;
+
+//     const user = await ScanHistory.findOne({
+//         _id: id,
+//         user: req.user._id,
+//     });
+//     if(){
+
+//     }    
+
+// });
