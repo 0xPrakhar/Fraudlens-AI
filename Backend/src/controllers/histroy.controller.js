@@ -64,15 +64,27 @@ export const deleteHistory = asyncHandler(async (req, res) => {
     );
 });
 
-// export deleteUser= asyncHandler(()=>{
-//      const { id } = req.params;
+export const deleteUser = asyncHandler(async (req, res) => {
 
-//     const user = await ScanHistory.findOne({
-//         _id: id,
-//         user: req.user._id,
-//     });
-//     if(){
+    const { firebaseId } = req.params;
 
-//     }    
+    if (!firebaseId) {
+        throw new ApiError(400, "Firebase ID is required");
+    }
 
-// });
+    const deletedUser = await User.findOneAndDelete({
+        firebaseId
+    });
+
+    if (!deletedUser) {
+        throw new ApiError(404, "User not found");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            deletedUser,
+            "User deleted successfully"
+        )
+    );
+});

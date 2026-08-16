@@ -4,6 +4,7 @@ import {
     getAllHistory,
     getHistoryById,
     deleteHistory,
+    deleteUser
 } from '../controllers/histroy.controller.js'
 
 const historyRoutes = Router();
@@ -25,5 +26,12 @@ historyRoutes.delete(
     verifyFirebaseUser,
     deleteHistory
 );
+
+historyRoutes.get(
+    "/:id",
+    verifyFirebaseUser,
+   deleteUser,
+);
+
 
 export default historyRoutes;
