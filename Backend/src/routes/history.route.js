@@ -27,7 +27,7 @@ historyRoutes.delete(
     deleteHistory
 );
 
-historyRoutes.get(
+historyRoutes.delete(
     "/:id",
     verifyFirebaseUser,
    deleteUser,

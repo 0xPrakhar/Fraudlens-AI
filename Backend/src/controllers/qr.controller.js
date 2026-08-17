@@ -37,27 +37,27 @@ export const qrScanner = asyncHandler(async (req, res) => {
 
 
     // 4. Save scan history
-    await saveScanHistory({
+    // await saveScanHistory({
 
-        user: req.user._id,
+    //     user: req.user._id,
 
-        scanType: "qr",
+    //     scanType: "qr",
 
-        // AI summary as history input
-        input:
-            result.summary ||
-            "QR data not available",
+    //     // AI summary as history input
+    //     input:
+    //         result.summary ||
+    //         "QR data not available",
 
-        // Original QR image
-        image: {
-            url: uploadedImage.secure_url,
-            publicId: uploadedImage.public_id,
-        },
+    //     // Original QR image
+    //     image: {
+    //         url: uploadedImage.secure_url,
+    //         publicId: uploadedImage.public_id,
+    //     },
 
-        // AI analysis
-        result: result,
+    //     // AI analysis
+    //     result: result,
 
-    });
+    // });
 
 
     // 5. Send response

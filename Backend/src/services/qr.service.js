@@ -346,6 +346,10 @@ const qrScan = async (imageUrl) => {
 };
 
 
+
+
+
+
 export {
     qrDecoder,
     classifyQRData,
