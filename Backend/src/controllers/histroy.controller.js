@@ -65,6 +65,7 @@ export const deleteHistory = asyncHandler(async (req, res) => {
     );
 });
 
+
 export const deleteUser = asyncHandler(async (req, res) => {
     const { id } = req.params; 
     console.log("Delete request for Firebase UID:", id);
@@ -73,7 +74,7 @@ export const deleteUser = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Firebase UID is required");
     }
 
-   
+    // Delete the user by firebaseUid
     const deletedUser = await User.findOneAndDelete({ firebaseUid: id });
 
     if (!deletedUser) {
@@ -87,4 +88,3 @@ export const deleteUser = asyncHandler(async (req, res) => {
         new ApiResponse(200, deletedUser, "User and history deleted successfully")
     );
 });
-
