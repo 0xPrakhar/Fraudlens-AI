@@ -11,6 +11,7 @@ import {
   Lock,
 } from "lucide-react";
 import { auth } from "../firebase/firebase";
+import { deleteUserAccount } from "../services/api";
 
 export default function ProfilePage() {
   const currentUser = auth.currentUser;
@@ -18,6 +19,7 @@ export default function ProfilePage() {
   // Default User Fallback Details
   const userName = currentUser?.displayName || "Aman Yadav";
   const userEmail = currentUser?.email || "aman@fraudlens.ai";
+  const firebaseId = currentUser?.uid;
 
   // Format Account creation date from Firebase Metadata or fallback
   const creationDate = currentUser?.metadata?.creationTime
@@ -28,12 +30,44 @@ export default function ProfilePage() {
       })
     : "November 2025";
 
-  // State for Coming Soon Alert Banner
+  // State for Alert Banner & Deleting Loading state
   const [alertMessage, setAlertMessage] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleComingSoon = (actionName) => {
     setAlertMessage(`${actionName} feature is coming soon in the next update!`);
     setTimeout(() => setAlertMessage(null), 4000);
+  };
+
+  // Real Delete Account Handler
+  const handleDeleteAccount = async () => {
+    if (!window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+      return;
+    }
+
+    if (!firebaseId) {
+      alert("No active Firebase user found.");
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      // 1. Delete user from MongoDB via backend API route (/api/v1/history/:firebaseId)
+      await deleteUserAccount(firebaseId);
+
+      // 2. Delete user from Firebase Authentication
+      if (currentUser) {
+        await currentUser.delete();
+      }
+
+      alert("Account successfully deleted.");
+      window.location.href = "/login"; // Redirect user after deletion
+    } catch (err) {
+      console.error("Account deletion failed:", err);
+      alert(err.message || "Failed to delete account. Please re-login and try again.");
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -120,7 +154,7 @@ export default function ProfilePage() {
           end-to-end encryption.
         </div>
 
-        {/* Action Buttons (Edit & Delete -> Coming Soon) */}
+        {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
           <button
             onClick={() => handleComingSoon("Edit Profile")}
@@ -130,10 +164,11 @@ export default function ProfilePage() {
           </button>
 
           <button
-            onClick={() => handleComingSoon("Delete Account")}
-            className="px-6 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-500/10 text-slate-600 dark:text-slate-300 hover:text-red-600 font-bold rounded-2xl text-sm transition-all flex items-center gap-2 cursor-pointer border border-slate-200 dark:border-slate-700"
+            onClick={handleDeleteAccount}
+            disabled={isDeleting}
+            className="px-6 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-500/10 text-slate-600 dark:text-slate-300 hover:text-red-600 font-bold rounded-2xl text-sm transition-all flex items-center gap-2 cursor-pointer border border-slate-200 dark:border-slate-700 disabled:opacity-50"
           >
-            <Trash2 size={16} /> Delete Account
+            <Trash2 size={16} /> {isDeleting ? "Deleting..." : "Delete Account"}
           </button>
         </div>
       </div>

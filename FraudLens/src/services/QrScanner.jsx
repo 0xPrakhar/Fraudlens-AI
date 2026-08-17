@@ -5,7 +5,10 @@ import {
   Activity,
   XCircle,
   CheckCircle,
+  AlertTriangle,
+  ShieldAlert
 } from "lucide-react";
+import { scanTarget } from "../services/api";
 
 export default function QrScanner() {
   const [isScanning, setIsScanning] = useState(false);
@@ -24,22 +27,10 @@ export default function QrScanner() {
     formData.append("image", file);
 
     try {
-      // Yahan env variable use karein, jo Render backend URL uthayega
-      const API_Base = import.meta.env.VITE_API_BASE_URL;
-
-      const response = await fetch(`${API_Base}/api/v1/qr/scan`, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to scan QR code");
-      }
-
-      console.log("=== QR SCAN BACKEND RESPONSE ===", data);
-      setResult(data.data);
+      const response = await scanTarget("qr", formData);
+      console.log("=== QR SCAN API RESPONSE ===", response);
+      
+      setResult(response.data || response);
     } catch (err) {
       console.error("QR Scan Error:", err);
       setError(err.message || "Something went wrong during QR scanning.");
@@ -57,7 +48,7 @@ export default function QrScanner() {
           QR Code Scanner
         </h1>
         <p className="text-slate-500 dark:text-slate-400 mt-3 text-sm max-w-lg">
-          Upload a QR code image to inspect its destination before scanning.
+          Upload a QR code image to inspect its destination before scanning and prevent malicious redirects.
         </p>
       </div>
 
@@ -84,44 +75,47 @@ export default function QrScanner() {
 
         {isScanning && (
           <div className="mt-8 flex items-center gap-3 text-cyan-600 dark:text-cyan-400 font-bold">
-            <Activity className="animate-spin" /> Analyzing QR via Backend & AI...
+            <Activity className="animate-spin" /> Analyzing QR Code via AI...
           </div>
         )}
 
         {error && (
-          <div className="mt-6 p-4 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl text-sm font-medium">
+          <div className="mt-6 p-4 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl text-sm font-medium w-full text-center">
             ❌ {error}
           </div>
         )}
       </div>
 
       {/* RESULT SECTION */}
-      {result && !isScanning && (
+      {result?.analysis && !isScanning && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
           <div className="p-6 rounded-3xl border bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-black text-cyan-600 dark:text-cyan-400">
-                  Scan Analysis Result
+                  Scan Analysis Complete
                 </h2>
                 <p className="text-xs font-mono opacity-80 mt-1 break-all">
-                  Image URL: {result.qrImage?.imageUrl}
+                  Status: {result.analysis?.overallStatus}
                 </p>
               </div>
               <div className="text-right">
                 <span className="px-3 py-1 bg-cyan-500/10 text-cyan-500 rounded-full text-xs font-bold uppercase">
-                  Score: {result.analysis?.riskScore ?? "N/A"}/100
+                  Risk Score: {result.analysis?.riskScore ?? "N/A"}/100
                 </span>
               </div>
             </div>
 
-            <div className="mt-6 bg-black/5 dark:bg-black/40 p-4 rounded-xl overflow-x-auto">
-              <p className="text-xs font-bold text-slate-400 mb-2 uppercase">
-                Raw Analysis Data:
-              </p>
-              <pre className="text-xs font-mono text-cyan-300">
-                {JSON.stringify(result.analysis, null, 2)}
-              </pre>
+            <div className="mt-6 space-y-4">
+              <div className="bg-black/5 dark:bg-black/40 p-4 rounded-xl">
+                <p className="text-xs font-bold text-slate-400 uppercase mb-1">Summary</p>
+                <p className="text-sm font-semibold">{result.analysis?.summary}</p>
+              </div>
+
+              <div className="bg-black/5 dark:bg-black/40 p-4 rounded-xl">
+                <p className="text-xs font-bold text-slate-400 uppercase mb-2">AI Explanation</p>
+                <p className="text-sm opacity-90">{result.analysis?.aiExplanation}</p>
+              </div>
             </div>
           </div>
         </div>
