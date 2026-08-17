@@ -9,6 +9,7 @@ import {
 
 const historyRoutes = Router();
 
+
 historyRoutes.get(
     "/",
     verifyFirebaseUser,
@@ -28,7 +29,7 @@ historyRoutes.delete(
 );
 
 historyRoutes.delete(
-    "/:id",
+    "/user/:id",
     verifyFirebaseUser,
    deleteUser,
 );
