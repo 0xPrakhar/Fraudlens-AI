@@ -2,6 +2,7 @@ import { ScanHistory } from "../models/scanHistory.model.js";
 import { ApiError } from "../utiles/ApiError.js";
 import { ApiResponse } from "../utiles/ApiRespone.js";
 import { asyncHandler } from "../utiles/asyncHandler.js";
+import { User } from "../models/user.model.js";
 
 // Get all history
 export const getAllHistory = asyncHandler(async (req, res) => {
@@ -65,15 +66,14 @@ export const deleteHistory = asyncHandler(async (req, res) => {
 });
 
 export const deleteUser = asyncHandler(async (req, res) => {
+    const { firebaseUid } = req.params; // use the correct field name
 
-    const { firebaseId } = req.params;
-
-    if (!firebaseId) {
-        throw new ApiError(400, "Firebase ID is required");
+    if (!firebaseUid) {
+        throw new ApiError(400, "Firebase UID is required");
     }
 
     const deletedUser = await User.findOneAndDelete({
-        firebaseId
+        firebaseUid // match the schema field
     });
 
     if (!deletedUser) {
