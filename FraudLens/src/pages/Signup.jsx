@@ -20,7 +20,7 @@ import {
   User,
   CheckCircle2,
   X,
-  Sparkles
+  Sparkles,
 } from "lucide-react";
 
 export default function Signup() {
@@ -34,7 +34,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   // State for Email Verification Popup Modal
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
@@ -67,8 +67,19 @@ export default function Signup() {
     if (!emailRegex.test(cleanEmail)) return false;
 
     const blockedKeywords = [
-      "test", "exam", "fake", "dummy", "abc", "xyz", "asdf", 
-      "temp", "sample", "qwerty", "foo", "bar", "admin"
+      "test",
+      "exam",
+      "fake",
+      "dummy",
+      "abc",
+      "xyz",
+      "asdf",
+      "temp",
+      "sample",
+      "qwerty",
+      "foo",
+      "bar",
+      "admin",
     ];
 
     const usernamePart = cleanEmail.split("@")[0];
@@ -85,7 +96,9 @@ export default function Signup() {
     setError("");
 
     if (!isValidRealEmail(email)) {
-      setError("Please enter a valid, active email address. Test or fake emails are not allowed.");
+      setError(
+        "Please enter a valid, active email address. Test or fake emails are not allowed.",
+      );
       return;
     }
 
@@ -162,10 +175,13 @@ export default function Signup() {
                 Full Name
               </label>
               <div className="relative">
-                <User size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <User
+                  size={18}
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                />
                 <input
                   type="text"
-                  placeholder="Aman Yadav"
+                  placeholder="XYZ"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -179,7 +195,10 @@ export default function Signup() {
                 Email Address
               </label>
               <div className="relative">
-                <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Mail
+                  size={18}
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                />
                 <input
                   type="email"
                   placeholder="you@example.com"
@@ -196,7 +215,10 @@ export default function Signup() {
                 Password
               </label>
               <div className="relative">
-                <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Lock
+                  size={18}
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                />
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
@@ -220,7 +242,10 @@ export default function Signup() {
                 Confirm Password
               </label>
               <div className="relative">
-                <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Lock
+                  size={18}
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                />
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="••••••••"
@@ -234,7 +259,11 @@ export default function Signup() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
                 >
-                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
                 </button>
               </div>
             </div>
@@ -250,12 +279,20 @@ export default function Signup() {
               disabled={loading}
               className="w-full py-3.5 mt-2 rounded-2xl bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 transition-all disabled:opacity-70 cursor-pointer text-sm"
             >
-              {loading ? "Creating Account..." : <>Get Protected <ArrowRight size={18} /></>}
+              {loading ? (
+                "Creating Account..."
+              ) : (
+                <>
+                  Get Protected <ArrowRight size={18} />
+                </>
+              )}
             </button>
 
             <div className="flex items-center gap-3 py-1">
               <div className="flex-1 border-t border-slate-200 dark:border-slate-800" />
-              <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">OR</span>
+              <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">
+                OR
+              </span>
               <div className="flex-1 border-t border-slate-200 dark:border-slate-800" />
             </div>
 
@@ -276,7 +313,10 @@ export default function Signup() {
 
           <p className="mt-6 text-center text-sm font-medium text-slate-500 dark:text-slate-400">
             Already have an account?{" "}
-            <Link to="/login" className="text-cyan-600 dark:text-cyan-400 font-bold hover:underline">
+            <Link
+              to="/login"
+              className="text-cyan-600 dark:text-cyan-400 font-bold hover:underline"
+            >
               Sign In
             </Link>
           </p>
@@ -315,7 +355,9 @@ export default function Signup() {
               </div>
 
               <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                We've sent a verification link to your email inbox. Please verify your email address to activate your account. Check your <strong>Spam or Junk folder</strong> if you don't find it.
+                We've sent a verification link to your email inbox. Please
+                verify your email address to activate your account. Check your{" "}
+                <strong>Spam or Junk folder</strong> if you don't find it.
               </p>
 
               <div className="pt-2">
