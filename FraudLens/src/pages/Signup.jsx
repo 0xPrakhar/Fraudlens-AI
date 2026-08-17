@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase/firebase";
 import { useNavigate, Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Shield,
   Mail,
@@ -18,6 +18,9 @@ import {
   Eye,
   EyeOff,
   User,
+  CheckCircle2,
+  X,
+  Sparkles
 } from "lucide-react";
 
 export default function Signup() {
@@ -28,16 +31,17 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
+  // State for Email Verification Popup Modal
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const syncUserWithBackend = async (user) => {
     const token = await user.getIdToken();
-
     const response = await fetch(`${API_BASE_URL}/api/v1/auth/sync`, {
       method: "POST",
       headers: {
@@ -54,11 +58,9 @@ export default function Signup() {
       throw new Error(`Server sync failed with status: ${response.status}`);
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   };
 
-  // 🛑 STRICT HELPER FUNCTION TO BLOCK FAKE/TEST EMAILS
   const isValidRealEmail = (rawEmail) => {
     const cleanEmail = rawEmail.trim().toLowerCase();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -81,10 +83,9 @@ export default function Signup() {
   async function handleSignup(e) {
     e.preventDefault();
     setError("");
-    setSuccessMsg("");
 
     if (!isValidRealEmail(email)) {
-      setError("Please enter a valid, active email address. Test or fake emails (like test@gmail.com) are not allowed.");
+      setError("Please enter a valid, active email address. Test or fake emails are not allowed.");
       return;
     }
 
@@ -106,17 +107,10 @@ export default function Signup() {
       await sendEmailVerification(res.user);
       await syncUserWithBackend(res.user);
 
-      // Force sign out so they cannot access dashboard without verifying email
       await signOut(auth);
-
-      setSuccessMsg("Account created! A verification link has been sent to your email. Please verify before signing in.");
-      
-      setTimeout(() => {
-        navigate("/login");
-      }, 300);
-
+      setShowVerificationModal(true); // Show matching modal popup
     } catch (err) {
-      console.error("❌ Signup or Sync failed:", err);
+      console.error("❌ Signup failed:", err);
       setError(err.message || "Failed to create account. Please try again.");
     } finally {
       setLoading(false);
@@ -132,7 +126,7 @@ export default function Signup() {
       await syncUserWithBackend(res.user);
       navigate("/app/dashboard");
     } catch (err) {
-      console.error("❌ Google Signup or Sync failed:", err);
+      console.error("❌ Google Signup failed:", err);
       setError(err.message || "Google Signup Failed");
     } finally {
       setLoading(false);
@@ -146,11 +140,11 @@ export default function Signup() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md max-h-[95dvh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
-        <div className="p-6 sm:p-8 rounded-3xl bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-2xl">
+        <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl relative">
           <div className="text-center mb-6">
             <div className="flex justify-center mb-3">
-              <div className="p-3 rounded-2xl bg-blue-50 dark:bg-blue-500/10">
-                <Shield size={28} className="text-blue-600 dark:text-blue-500" />
+              <div className="p-3 rounded-2xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
+                <Shield size={28} />
               </div>
             </div>
 
@@ -158,13 +152,13 @@ export default function Signup() {
               FraudLens
             </h1>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-medium">
-              Create Your Account 🚀
+              Create Your Protected Account 🚀
             </p>
           </div>
 
           <form onSubmit={handleSignup} className="space-y-4">
             <div>
-              <label className="block mb-1.5 text-sm font-semibold text-slate-700 dark:text-slate-300">
+              <label className="block mb-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Full Name
               </label>
               <div className="relative">
@@ -175,14 +169,14 @@ export default function Signup() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="w-full py-2.5 pl-10 pr-4 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-blue-500"
+                  className="w-full py-3 pl-10 pr-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-cyan-500 transition-all text-sm font-semibold"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block mb-1.5 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                Email
+              <label className="block mb-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Email Address
               </label>
               <div className="relative">
                 <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -192,13 +186,13 @@ export default function Signup() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full py-2.5 pl-10 pr-4 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-blue-500"
+                  className="w-full py-3 pl-10 pr-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-cyan-500 transition-all text-sm font-semibold"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block mb-1.5 text-sm font-semibold text-slate-700 dark:text-slate-300">
+              <label className="block mb-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Password
               </label>
               <div className="relative">
@@ -209,12 +203,12 @@ export default function Signup() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full py-2.5 pl-10 pr-12 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-blue-500"
+                  className="w-full py-3 pl-10 pr-12 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-cyan-500 transition-all text-sm font-semibold"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -222,7 +216,7 @@ export default function Signup() {
             </div>
 
             <div>
-              <label className="block mb-1.5 text-sm font-semibold text-slate-700 dark:text-slate-300">
+              <label className="block mb-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Confirm Password
               </label>
               <div className="relative">
@@ -233,12 +227,12 @@ export default function Signup() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="w-full py-2.5 pl-10 pr-12 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-blue-500"
+                  className="w-full py-3 pl-10 pr-12 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-cyan-500 transition-all text-sm font-semibold"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
                 >
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -246,30 +240,22 @@ export default function Signup() {
             </div>
 
             {error && (
-              <div className="p-3 rounded-xl text-sm font-medium bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400">
+              <div className="p-3.5 rounded-2xl text-xs font-semibold bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400">
                 {error}
               </div>
             )}
 
-            {successMsg && (
-              <div className="p-3 rounded-xl text-sm font-medium bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
-                {successMsg}
-              </div>
-            )}
-
-            <motion.button
+            <button
               type="submit"
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
               disabled={loading}
-              className="w-full py-3 mt-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 transition-all disabled:opacity-70 cursor-pointer"
+              className="w-full py-3.5 mt-2 rounded-2xl bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 transition-all disabled:opacity-70 cursor-pointer text-sm"
             >
-              {loading ? "Creating Account..." : <>Create Account <ArrowRight size={18} /></>}
-            </motion.button>
+              {loading ? "Creating Account..." : <>Get Protected <ArrowRight size={18} /></>}
+            </button>
 
-            <div className="flex items-center gap-3 py-2">
+            <div className="flex items-center gap-3 py-1">
               <div className="flex-1 border-t border-slate-200 dark:border-slate-800" />
-              <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider">OR</span>
+              <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">OR</span>
               <div className="flex-1 border-t border-slate-200 dark:border-slate-800" />
             </div>
 
@@ -277,7 +263,7 @@ export default function Signup() {
               type="button"
               onClick={handleGoogleSignup}
               disabled={loading}
-              className="w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-bold shadow-sm transition-all disabled:opacity-70 cursor-pointer"
+              className="w-full py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-bold shadow-sm transition-all disabled:opacity-70 cursor-pointer"
             >
               <img
                 src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -290,12 +276,60 @@ export default function Signup() {
 
           <p className="mt-6 text-center text-sm font-medium text-slate-500 dark:text-slate-400">
             Already have an account?{" "}
-            <Link to="/login" className="text-blue-600 dark:text-blue-500 font-bold hover:underline">
+            <Link to="/login" className="text-cyan-600 dark:text-cyan-400 font-bold hover:underline">
               Sign In
             </Link>
           </p>
         </div>
       </motion.div>
+
+      {/* 📧 MATCHING MODERN MODAL POPUP FOR EMAIL VERIFICATION */}
+      <AnimatePresence>
+        {showVerificationModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative"
+            >
+              <button
+                onClick={() => navigate("/login")}
+                className="absolute top-6 right-6 p-2 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex items-center gap-4">
+                <div className="p-3.5 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 rounded-2xl border border-cyan-500/20">
+                  <Mail size={24} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black text-slate-900 dark:text-white">
+                    Verify Your Email
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Action required before signing in
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                We've sent a verification link to your email inbox. Please verify your email address to activate your account. Check your <strong>Spam or Junk folder</strong> if you don't find it.
+              </p>
+
+              <div className="pt-2">
+                <button
+                  onClick={() => navigate("/login")}
+                  className="w-full py-3.5 px-4 rounded-2xl bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black text-sm shadow-lg shadow-cyan-500/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+                >
+                  OK, Got it
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
