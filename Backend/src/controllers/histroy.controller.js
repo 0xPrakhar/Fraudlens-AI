@@ -67,6 +67,8 @@ export const deleteHistory = asyncHandler(async (req, res) => {
 
 export const deleteUser = asyncHandler(async (req, res) => {
     const { id } = req.params; // param is called "id" in your route
+    console.log("Delete request for id:", id);
+
 
     if (!id) {
         throw new ApiError(400, "User ID is required");
