@@ -66,25 +66,20 @@ export const deleteHistory = asyncHandler(async (req, res) => {
 });
 
 export const deleteUser = asyncHandler(async (req, res) => {
-    const { firebaseUid } = req.params; // use the correct field name
+    const { id } = req.params; // param is called "id" in your route
 
-    if (!firebaseUid) {
-        throw new ApiError(400, "Firebase UID is required");
+    if (!id) {
+        throw new ApiError(400, "User ID is required");
     }
 
-    const deletedUser = await User.findOneAndDelete({
-        firebaseUid // match the schema field
-    });
+    // Map route param "id" to schema field "firebaseUid"
+    const deletedUser = await User.findOneAndDelete({ firebaseUid: id });
 
     if (!deletedUser) {
         throw new ApiError(404, "User not found");
     }
 
     return res.status(200).json(
-        new ApiResponse(
-            200,
-            deletedUser,
-            "User deleted successfully"
-        )
+        new ApiResponse(200, deletedUser, "User deleted successfully")
     );
 });
