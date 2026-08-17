@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 import {
   Link as LinkIcon,
   MessageSquare,
@@ -9,19 +9,12 @@ import {
   Activity,
   UserCheck,
   Lock,
-  Zap,
   ArrowRight,
-  ShieldCheck,
-  Eye,
-  ShieldAlert,
   Clock,
 } from "lucide-react";
 import { Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 import { auth } from "../firebase/firebase";
-import { fetchScanHistory } from "../services/api";
-  // Import the detailed report modal we built earlier
 import ScanReportModal from "../services/Model/ScanReportModal";
-
 
 const trendData = [
   { name: "Jan", threats: 40, safe: 120 },
@@ -34,6 +27,7 @@ const trendData = [
 ];
 
 export default function DashboardHome() {
+  const { userId } = useParams(); // URL se dynamic userId capture karne ke liye
   const currentUser = auth.currentUser;
   
   // Safe fallbacks so raw/undefined data never appears directly on UI
@@ -212,7 +206,7 @@ export default function DashboardHome() {
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <RouterLink
-              to="/app/dashboard/url"
+              to={`/app/dashboard/${userId}/url`}
               className="flex flex-col items-center justify-center p-5 rounded-2xl bg-cyan-50/60 dark:bg-cyan-950/30 border border-cyan-200 dark:border-cyan-900/50 text-cyan-700 dark:text-cyan-300 hover:scale-[1.03] hover:shadow-md transition-all cursor-pointer group"
             >
               <div className="p-3.5 rounded-2xl bg-cyan-100 dark:bg-cyan-900/50 mb-3 group-hover:bg-cyan-200 transition-colors shadow-inner">
@@ -222,7 +216,7 @@ export default function DashboardHome() {
             </RouterLink>
 
             <RouterLink
-              to="/app/dashboard/message"
+              to={`/app/dashboard/${userId}/message`}
               className="flex flex-col items-center justify-center p-5 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/50 text-indigo-700 dark:text-indigo-300 hover:scale-[1.03] hover:shadow-md transition-all cursor-pointer group"
             >
               <div className="p-3.5 rounded-2xl bg-indigo-100 dark:bg-indigo-900/50 mb-3 group-hover:bg-indigo-200 transition-colors shadow-inner">
@@ -232,7 +226,7 @@ export default function DashboardHome() {
             </RouterLink>
 
             <RouterLink
-              to="/app/dashboard/image"
+              to={`/app/dashboard/${userId}/image`}
               className="flex flex-col items-center justify-center p-5 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 text-emerald-700 dark:text-emerald-300 hover:scale-[1.03] hover:shadow-md transition-all cursor-pointer group"
             >
               <div className="p-3.5 rounded-2xl bg-emerald-100 dark:bg-emerald-900/50 mb-3 group-hover:bg-emerald-200 transition-colors shadow-inner">
@@ -242,7 +236,7 @@ export default function DashboardHome() {
             </RouterLink>
 
             <RouterLink
-              to="/app/dashboard/qr"
+              to={`/app/dashboard/${userId}/qr`}
               className="flex flex-col items-center justify-center p-5 rounded-2xl bg-purple-50/60 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-900/50 text-purple-700 dark:text-purple-300 hover:scale-[1.03] hover:shadow-md transition-all cursor-pointer group"
             >
               <div className="p-3.5 rounded-2xl bg-purple-100 dark:bg-purple-900/50 mb-3 group-hover:bg-purple-200 transition-colors shadow-inner">
@@ -344,7 +338,7 @@ export default function DashboardHome() {
       {/* 4. RECENT AUDIT LOGS & TREND CHART */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Recent Audit Logs Table (Now Clickable to open full modal report) */}
+        {/* Recent Audit Logs Table */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm lg:col-span-2 overflow-hidden flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-4">
@@ -355,7 +349,7 @@ export default function DashboardHome() {
                 <p className="text-xs text-slate-400">Click any row to inspect complete scan report</p>
               </div>
               <RouterLink
-                to="/app/dashboard/history"
+                to={`/app/dashboard/${userId}/history`}
                 className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 View All History <ArrowRight size={14} />
@@ -499,7 +493,7 @@ export default function DashboardHome() {
         </div>
       </div>
 
-      {/* DETAILED SCAN REPORT MODAL (When clicking any recent log row) */}
+      {/* DETAILED SCAN REPORT MODAL */}
       <ScanReportModal
         selectedItem={selectedScanItem}
         onClose={() => setSelectedScanItem(null)}

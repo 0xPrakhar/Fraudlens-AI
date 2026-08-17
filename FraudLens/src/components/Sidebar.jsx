@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { useTheme } from "next-themes";
+import { auth } from "../firebase/firebase"; // Firebase auth import karein
 import {
   ScanSearch,
   Link as LinkIcon,
@@ -8,7 +9,6 @@ import {
   Image as ImageIcon,
   QrCode,
   Puzzle,
-  Activity,
   History,
   Settings,
   LayoutDashboard,
@@ -23,35 +23,36 @@ export default function Sidebar({ isOpen, setIsOpen }) {
   }, []);
 
   const isDark = mounted && theme === "dark";
+
+  // Current logged-in user ki UID nikal lein (fallback "guest" agar load na ho)
+  const userId = auth.currentUser?.uid || "guest";
   
-  // 🛠️ FIX 2: Copilot aur Reports ko hata diya gaya hai
+  // 🛠️ FIX: Dynamic paths ke sath menu items jisme ${userId} dynamically inject hoga
   const menuItems = [
-    { name: "Dashboard", path: "/app/dashboard", icon: LayoutDashboard },
-    { name: "AI Scan Center", path: "/app/dashboard/scan", icon: ScanSearch },
-    { name: "URL Scanner", path: "/app/dashboard/url", icon: LinkIcon },
-    { name: "Text Scanner", path: "/app/dashboard/message", icon: MessageSquare },
-    { name: "QR Scanner", path: "/app/dashboard/qr", icon: QrCode },
-    { name: "Screenshot Scanner", path: "/app/dashboard/image", icon: ImageIcon },
-    { name: "Browser Extension", path: "/app/dashboard/extension", icon: Puzzle },
-    { name: "History", path: "/app/dashboard/history", icon: History },
+    { name: "Dashboard", path: `/app/dashboard/${userId}`, icon: LayoutDashboard },
+    { name: "AI Scan Center", path: `/app/dashboard/${userId}/scan`, icon: ScanSearch },
+    { name: "URL Scanner", path: `/app/dashboard/${userId}/url`, icon: LinkIcon },
+    { name: "Text Scanner", path: `/app/dashboard/${userId}/message`, icon: MessageSquare },
+    { name: "QR Scanner", path: `/app/dashboard/${userId}/qr`, icon: QrCode },
+    { name: "Screenshot Scanner", path: `/app/dashboard/${userId}/image`, icon: ImageIcon },
+    { name: "Browser Extension", path: `/app/dashboard/${userId}/extension`, icon: Puzzle },
+    { name: "History", path: `/app/dashboard/${userId}/history`, icon: History },
   ];
 
   return (
     <aside
-      // 🛠️ FIX 3: Close hone par w-20 (Icon only) hoga. Navbar ke niche aayega isliye absolute/fixed hata diya.
       className={`relative z-20 transition-all duration-300 ease-in-out flex flex-col shrink-0 h-full ${
         isOpen ? "w-64" : "w-20"
       } ${
         isDark ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200"
       } border-r`}
     >
-      {/* 🛠️ FIX 4: Scrollbar Hide Classes ([&::-webkit-scrollbar]:hidden) */}
       <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {menuItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
-            title={!isOpen ? item.name : ""} // Close hone par hover karne se naam dikhega
+            title={!isOpen ? item.name : ""}
             className={({ isActive }) =>
               `w-full flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 ${
                 isOpen ? "justify-start" : "justify-center"
@@ -78,7 +79,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                       : "text-slate-400"
                   }`}
                 />
-                {/* 🛠️ FIX 5: Jab sidebar open hoga tabhi text dikhega */}
                 {isOpen && <span className="text-sm truncate">{item.name}</span>}
               </>
             )}
@@ -92,7 +92,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         }`}
       >
         <NavLink
-          to="/app/dashboard/settings"
+          to={`/app/dashboard/${userId}/settings`}
           title={!isOpen ? "Settings" : ""}
           className={({ isActive }) =>
             `w-full flex items-center px-3 py-2.5 rounded-xl transition-all text-sm ${

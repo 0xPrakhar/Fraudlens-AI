@@ -13,6 +13,7 @@ import {
   Settings,
 } from "lucide-react";
 import { auth } from "../firebase/firebase";
+import { signOut } from "firebase/auth"; // 🛠️ Added Firebase signOut
 
 export default function Navbar({ toggleSidebar }) {
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -45,10 +46,18 @@ export default function Navbar({ toggleSidebar }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
+  // 🛠️ SECURE LOGOUT FIX
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Properly sign out from Firebase
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      
+      // Use replace: true so back button cannot return to dashboard history
+      navigate("/login", { replace: true });
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
   };
 
   if (!mounted) {

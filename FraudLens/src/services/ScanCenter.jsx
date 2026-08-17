@@ -13,14 +13,14 @@ import {
 } from "lucide-react";
 
 export default function ScanCenter() {
-  const { username } = useParams();
+  const { userId } = useParams(); // URL se dynamic userId nikalne ke liye
 
   const scanTools = [
     {
       title: "URL Scanner",
       desc: "Analyze links for phishing, malware, and malicious redirects instantly.",
       icon: LinkIcon,
-      path: "/app/dashboard/url",
+      path: `/app/dashboard/${userId}/url`, // 🛠️ Dynamic User ID Added
       color: "text-blue-600 dark:text-blue-400",
       bg: "bg-blue-50 dark:bg-blue-500/10",
       border: "group-hover:border-blue-400 dark:group-hover:border-blue-500/50",
@@ -31,7 +31,7 @@ export default function ScanCenter() {
       title: "Message Scanner",
       desc: "Detect social engineering and scam patterns in SMS, WhatsApp or emails.",
       icon: MessageSquare,
-      path: "/app/dashboard/message",
+      path: `/app/dashboard/${userId}/message`, // 🛠️ Dynamic User ID Added
       color: "text-indigo-600 dark:text-indigo-400",
       bg: "bg-indigo-50 dark:bg-indigo-500/10",
       border:
@@ -43,7 +43,7 @@ export default function ScanCenter() {
       title: "Screenshot Scanner",
       desc: "Upload images of suspicious messages or profiles for AI OCR analysis.",
       icon: ImageIcon,
-      path: "/app/dashboard/image",
+      path: `/app/dashboard/${userId}/image`, // 🛠️ Dynamic User ID Added
       color: "text-emerald-600 dark:text-emerald-400",
       bg: "bg-emerald-50 dark:bg-emerald-500/10",
       border:
@@ -55,10 +55,10 @@ export default function ScanCenter() {
       title: "QR Code Scanner",
       desc: "Check QR codes for hidden malicious URLs before you scan them.",
       icon: QrCode,
-      path: "/app/dashboard/qr",
+      path: `/app/dashboard/${userId}/qr`, // 🛠️ Dynamic User ID Added
       color: "text-cyan-600 dark:text-cyan-400",
       bg: "bg-cyan-50 dark:bg-cyan-500/10",
-      border: "group-hover:border-cyan-400 dark:group-hover:border-cyan-500/50",
+      border: "group-hover:border-cyan-400 dark:group-hover:border-cyan-500/20",
       accent: "bg-cyan-500",
       isComingSoon: false,
     },

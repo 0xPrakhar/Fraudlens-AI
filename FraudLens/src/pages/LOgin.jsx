@@ -66,7 +66,7 @@ export default function Login() {
       }
 
       await syncUserWithBackend(user);
-      navigate(`/app/dashboard`);
+      navigate(`/app/dashboard/${user.uid}`); // 🛠️ Updated with user.uid
     } catch (err) {
       console.error("❌ Login failed:", err.code);
       if (err.code === "auth/user-not-found") {
@@ -116,7 +116,7 @@ export default function Login() {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       await syncUserWithBackend(result.user);
-      navigate(`/app/dashboard`);
+      navigate(`/app/dashboard/${result.user.uid}`); // 🛠️ Updated with result.user.uid
     } catch (err) {
       console.error("❌ Google Login failed:", err);
       setError(err.message || "Google Login Failed");

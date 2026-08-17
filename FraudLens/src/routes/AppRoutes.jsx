@@ -1,38 +1,3 @@
-// import { Routes, Route } from "react-router-dom";
-// import About from "../pages/About";
-// import Login from "../pages/LOgin";
-// import Signup from "../pages/Signup";
-// import Dashboard from "../pages/Dashboard";
-// import Landing from "../pages/Landing";
-// // import ScanCenter from "../pages/ScanCenter";
-// // import UrlScanner from "../pages/UrlScanner";
-// // import MessageScanner from "../pages/MessageScanner";
-// // import ScreenshotScanner from "../pages/ScreenshotScanner";
-// // import ThreatFeed from "../pages/ThreatFeed";
-// // import Analytics from "../pages/Analytics";
-// // import Settings from "../pages/Settings";
-
-// export default function AppRoutes() {
-//   return (
-//     <Routes>
-//       <Route path="/" element={<Landing />} />
-//       <Route path="/About" element={<About />} />
-//       <Route path="/login" element={<Login />} />
-//       <Route path="/register" element={<Signup />} />
-//       <Route path="/dashboard" element={<Dashboard />} />
-//       {/* <Route path="/scan" element={<ScanCenter />} />
-//       <Route path="/url" element={<UrlScanner />} />
-//       <Route path="/message" element={<MessageScanner />} />
-//       <Route path="/image" element={<ScreenshotScanner />} />
-//       <Route path="/threats" element={<ThreatFeed />} />
-//       <Route path="/analytics" element={<Analytics />} />
-//       <Route path="/settings" element={<Settings />} /> */}
-//     </Routes>
-//   );
-// }
-
-// Coming Some Pages
-
 import Extension from "../services/Extension";
 
 import { Routes, Route } from "react-router-dom";
@@ -43,7 +8,7 @@ import Landing from "../pages/Landing";
 
 // Layout & Protection
 import DashboardLayout from "../layouts/DashboardLayout";
-import ProtectedRoute from "../routes/ProtectedRoute"; // Path apne folder structure ke hisaab se check kar lein
+import ProtectedRoute from "../routes/ProtectedRoute";
 
 // Dashboard Pages
 import Dashboard from "../pages/Dashboard";
@@ -59,23 +24,25 @@ import ScreenshotScanner from "../services/ScreenshotScanner";
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* ================= PUBLIC PAGES (Bina Sidebar ke) ================= */}
+      {/* ================= PUBLIC PAGES ================= */}
       <Route path="/" element={<Landing />} />
       <Route path="/About" element={<About />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
 
-      {/* ================= DASHBOARD SYSTEM (Protected + Layout) ================= */}
+      {/* ================= DASHBOARD SYSTEM WITH USER ID ================= */}
       <Route
-        path="/app/dashboard"
+        path="/app/dashboard/:userId"
         element={
           <ProtectedRoute>
             <DashboardLayout />
           </ProtectedRoute>
         }
       >
-        {/* "index" ka matlab hai jab path sirf "/app/dashboard" ho, tab ye render hoga */}
+        {/* Jab path sirf "/app/dashboard/USER_ID" ho */}
         <Route index element={<Dashboard />} />
+        
+        {/* Sub-pages jinke URL mein aage /USER_ID/hoga */}
         <Route path="scan" element={<ScanCenter />} />
         <Route path="url" element={<UrlScanner />} />
         <Route path="profile" element={<Profile />} />
