@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { useTheme } from "next-themes";
-import { auth } from "../firebase/firebase"; // Firebase auth import karein
+import { auth } from "../firebase/firebase";
 import {
   ScanSearch,
   Link as LinkIcon,
@@ -12,6 +12,7 @@ import {
   History,
   Settings,
   LayoutDashboard,
+  BarChart3,
 } from "lucide-react";
 
 export default function Sidebar({ isOpen, setIsOpen }) {
@@ -24,13 +25,12 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
   const isDark = mounted && theme === "dark";
 
-  // Current logged-in user ki UID nikal lein (fallback "guest" agar load na ho)
   const userId = auth.currentUser?.uid || "guest";
   
-  // 🛠️ FIX: Dynamic paths ke sath menu items jisme ${userId} dynamically inject hoga
   const menuItems = [
     { name: "Dashboard", path: `/app/dashboard/${userId}`, icon: LayoutDashboard },
     { name: "AI Scan Center", path: `/app/dashboard/${userId}/scan`, icon: ScanSearch },
+    { name: "Analytics", path: `/app/dashboard/${userId}/analytics`, icon: BarChart3 },
     { name: "URL Scanner", path: `/app/dashboard/${userId}/url`, icon: LinkIcon },
     { name: "Text Scanner", path: `/app/dashboard/${userId}/message`, icon: MessageSquare },
     { name: "QR Scanner", path: `/app/dashboard/${userId}/qr`, icon: QrCode },
@@ -52,6 +52,8 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           <NavLink
             key={item.name}
             to={item.path}
+            // ✨ Yahan 'end' prop lagaya hai taaki Dashboard sirf exact match par highlight ho
+            end={item.name === "Dashboard"}
             title={!isOpen ? item.name : ""}
             className={({ isActive }) =>
               `w-full flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 ${
@@ -70,7 +72,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             {({ isActive }) => (
               <>
                 <item.icon
-                  size={20}
+                  size={18}
                   className={`shrink-0 ${isOpen ? "mr-3" : "mr-0"} ${
                     isActive
                       ? "text-blue-600"

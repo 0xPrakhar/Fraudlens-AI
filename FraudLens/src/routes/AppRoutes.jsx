@@ -5,6 +5,7 @@ import About from "../pages/About";
 import Login from "../pages/LOgin";
 import Signup from "../pages/Signup";
 import Landing from "../pages/Landing";
+import NotFound from "../pages/NotFound"; // 🛠️ 1. Import NotFound page
 
 // Layout & Protection
 import DashboardLayout from "../layouts/DashboardLayout";
@@ -20,6 +21,7 @@ import MessageScanner from "../services/MessageScanner";
 import QrScanner from "../services/QrScanner";
 import History from "../services/History";
 import ScreenshotScanner from "../services/ScreenshotScanner";
+import Analytics from "../services/Analytics";
 
 export default function AppRoutes() {
   return (
@@ -41,7 +43,7 @@ export default function AppRoutes() {
       >
         {/* Jab path sirf "/app/dashboard/USER_ID" ho */}
         <Route index element={<Dashboard />} />
-        
+
         {/* Sub-pages jinke URL mein aage /USER_ID/hoga */}
         <Route path="scan" element={<ScanCenter />} />
         <Route path="url" element={<UrlScanner />} />
@@ -52,7 +54,12 @@ export default function AppRoutes() {
         <Route path="History" element={<History />} />
         <Route path="image" element={<ScreenshotScanner />} />
         <Route path="extension" element={<Extension />} />
+        <Route path="analytics" element={<Analytics/>} />
       </Route>
+
+      {/* ================= 404 CATCH-ALL ROUTE ================= */}
+      {/* 🛠️ 2. Yeh galat ya non-existent URL (jaise /xyz) par 404 page dikhayega */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

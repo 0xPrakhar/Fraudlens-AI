@@ -15,6 +15,8 @@ import {
 import { Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 import { auth } from "../firebase/firebase";
 import ScanReportModal from "../services/Model/ScanReportModal";
+import { fetchScanHistory } from "../services/api"; // 🛠️ 
+
 
 const trendData = [
   { name: "Jan", threats: 40, safe: 120 },
