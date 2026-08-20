@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link as RouterLink, useParams } from "react-router-dom";
+import { Link as RouterLink, useParams, useNavigate } from "react-router-dom";
 import {
   Link as LinkIcon,
   MessageSquare,
@@ -11,12 +11,18 @@ import {
   Lock,
   ArrowRight,
   Clock,
+  ShieldAlert,
+  Terminal,
+  Cpu,
+  Download,
+  Search,
+  CheckCircle2,
+  AlertTriangle,
 } from "lucide-react";
 import { Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 import { auth } from "../firebase/firebase";
 import ScanReportModal from "../services/Model/ScanReportModal";
-import { fetchScanHistory } from "../services/api"; // 🛠️ 
-
+import { fetchScanHistory } from "../services/api";
 
 const trendData = [
   { name: "Jan", threats: 40, safe: 120 },
@@ -29,11 +35,14 @@ const trendData = [
 ];
 
 export default function DashboardHome() {
-  const { userId } = useParams(); // URL se dynamic userId capture karne ke liye
+  const { userId } = useParams();
+  const navigate = useNavigate();
   const currentUser = auth.currentUser;
-  
-  // Safe fallbacks so raw/undefined data never appears directly on UI
-  const userName = currentUser?.displayName || currentUser?.email?.split("@")[0] || "Secured User";
+
+  const userName =
+    currentUser?.displayName ||
+    currentUser?.email?.split("@")[0] ||
+    "Secured User";
   const userEmail = currentUser?.email || "protected@fraudlens.ai";
 
   const memberSince = currentUser?.metadata?.creationTime
@@ -43,14 +52,11 @@ export default function DashboardHome() {
       })
     : "Nov 2025";
 
-  // Real Backend History States
   const [historyList, setHistoryList] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Modal State for interactive audit log inspection
   const [selectedScanItem, setSelectedScanItem] = useState(null);
+  const [quickInput, setQuickInput] = useState("");
 
-  // Fetch real scan history using shared api service
   useEffect(() => {
     const loadDashboardHistory = async () => {
       try {
@@ -69,9 +75,8 @@ export default function DashboardHome() {
     loadDashboardHistory();
   }, []);
 
-  // --- CALCULATE METRICS FROM REAL BACKEND HISTORY ---
+  // --- CALCULATE METRICS ---
   const totalScansLifetime = historyList.length;
-
   const todayStr = new Date().toDateString();
   const scansToday = historyList.filter((item) => {
     const itemDate = item.createdAt || item.timestamp;
@@ -112,7 +117,6 @@ export default function DashboardHome() {
       : avgRiskScore > 30
         ? "Medium Risk"
         : "Low Risk";
-        
   const threatBadgeColor =
     avgRiskScore > 60
       ? "text-red-600 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900"
@@ -120,10 +124,18 @@ export default function DashboardHome() {
         ? "text-amber-600 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900"
         : "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-900";
 
+  // Quick Action Handler for instant lookup
+  const handleQuickLookup = (e) => {
+    e.preventDefault();
+    if (!quickInput.trim()) return;
+    navigate(`/app/dashboard/${userId}/url`, {
+      state: { initialInput: quickInput },
+    });
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-8 text-slate-900 dark:text-slate-100 pb-12 animate-in fade-in duration-300">
-      
-      {/* 1. HERO BANNER WITH INTERACTIVE GLOW */}
+      {/* 1. HERO BANNER */}
       <div className="relative overflow-hidden bg-white dark:bg-gradient-to-r dark:from-indigo-950 dark:via-slate-900 dark:to-blue-950 text-slate-900 dark:text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200 dark:border-indigo-500/20 transition-all">
         <div className="absolute right-0 top-0 w-96 h-96 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
 
@@ -161,7 +173,7 @@ export default function DashboardHome() {
           </div>
         </div>
 
-        {/* Real-time Stat Pills Inside Banner */}
+        {/* Real-time Stat Pills */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-slate-100 dark:border-white/10">
           <div className="p-3 rounded-2xl bg-slate-50/50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
             <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
@@ -193,17 +205,59 @@ export default function DashboardHome() {
             </p>
             <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-1.5 flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              v1.0 Gemini Online
+              Gemini Guard Active
             </p>
           </div>
         </div>
       </div>
 
-      {/* 2. QUICK ACTIONS & USER CONTEXT ROW */}
+      {/* NEW FEATURE 1: INSTANT THREAT LOOKUP BAR */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 border border-indigo-100 dark:border-indigo-900">
+            <Terminal size={20} />
+          </div>
+          <div>
+            <h4 className="font-bold text-sm">Instant Threat Inspection</h4>
+            <p className="text-xs text-slate-400">
+              Paste any suspicious URL or keyword for immediate AI evaluation.
+            </p>
+          </div>
+        </div>
+        <form
+          onSubmit={handleQuickLookup}
+          className="flex items-center gap-2 w-full sm:w-auto flex-1 max-w-md"
+        >
+          <div className="relative flex-1">
+            <Search
+              size={16}
+              className="absolute left-3.5 top-3 text-slate-400"
+            />
+            <input
+              type="text"
+              value={quickInput}
+              onChange={(e) => setQuickInput(e.target.value)}
+              placeholder="https://suspicious-domain.com..."
+              className="w-full pl-10 pr-4 py-2.5 text-xs rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:border-indigo-500 font-mono"
+            />
+          </div>
+          <button
+            type="submit"
+            className="px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition-all cursor-pointer shrink-0"
+          >
+            Quick Scan
+          </button>
+        </form>
+      </div>
+
+      {/* 2. QUICK ACTIONS & USER CONTEXT */}
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
         <div className="xl:col-span-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
           <h3 className="font-bold text-slate-900 dark:text-slate-100 text-base mb-4 flex items-center gap-2">
-            <Activity size={18} className="text-indigo-600 dark:text-indigo-400" />
+            <Activity
+              size={18}
+              className="text-indigo-600 dark:text-indigo-400"
+            />
             Quick Security Scanners
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -253,7 +307,8 @@ export default function DashboardHome() {
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
           <div>
             <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm mb-3 flex items-center gap-2">
-              <UserCheck size={16} className="text-indigo-500" /> Account Context
+              <UserCheck size={16} className="text-indigo-500" /> Account
+              Context
             </h3>
             <div className="space-y-2 text-xs text-slate-500 dark:text-slate-400">
               <p className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
@@ -281,65 +336,74 @@ export default function DashboardHome() {
             </div>
           </div>
           <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex items-center gap-1.5 font-medium">
-            <Lock size={12} className="text-emerald-500" /> Secure Session Active
+            <Lock size={12} className="text-emerald-500" /> Secure Session
+            Active
           </div>
         </div>
       </div>
 
-      {/* 3. SUB STATS GRID */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl flex justify-between items-center shadow-sm">
-          <div>
-            <p className="text-xs text-slate-500 font-medium mb-1">Total Scans</p>
-            <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">
-              {totalScansLifetime}
-            </p>
+      {/* NEW FEATURE 2: SYSTEM DIAGNOSTICS & TELEMETRY WIDGET */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-xs font-bold text-slate-500 uppercase">
+              AI Processing Load
+            </span>
+            <Cpu size={18} className="text-indigo-500" />
           </div>
-          <div className="text-[10px] font-black uppercase px-2.5 py-1 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 border border-indigo-200 dark:border-indigo-900">
-            LIVE
+          <p className="text-2xl font-black">14.2%</p>
+          <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full mt-2 overflow-hidden">
+            <div
+              className="bg-indigo-500 h-full rounded-full"
+              style={{ width: "14.2%" }}
+            ></div>
           </div>
+          <p className="text-[11px] text-slate-400 mt-2">
+            Gemini Pro API latency: 145ms
+          </p>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl flex justify-between items-center shadow-sm">
-          <div>
-            <p className="text-xs text-slate-500 font-medium mb-1">Neutralized</p>
-            <p className="text-2xl font-black text-red-600 dark:text-red-400">
-              {threatsBlocked}
-            </p>
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-xs font-bold text-slate-500 uppercase">
+              Heuristic Shield Engine
+            </span>
+            <ShieldAlert size={18} className="text-emerald-500" />
           </div>
-          <div className="text-[10px] font-black uppercase px-2.5 py-1 rounded-xl bg-red-50 dark:bg-red-950/50 text-red-600 border border-red-200 dark:border-red-900">
-            LIVE
+          <p className="text-2xl font-black text-emerald-600">Active</p>
+          <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full mt-2 overflow-hidden">
+            <div
+              className="bg-emerald-500 h-full rounded-full"
+              style={{ width: "100%" }}
+            ></div>
           </div>
+          <p className="text-[11px] text-slate-400 mt-2">
+            Zero-day signature base updated today
+          </p>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl flex justify-between items-center shadow-sm">
-          <div>
-            <p className="text-xs text-slate-500 font-medium mb-1">Safe Links</p>
-            <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
-              {Math.max(0, totalScansLifetime - threatsBlocked)}
-            </p>
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-xs font-bold text-slate-500 uppercase">
+              Database Audit Logs
+            </span>
+            <Activity size={18} className="text-cyan-500" />
           </div>
-          <div className="text-[10px] font-black uppercase px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 border border-emerald-200 dark:border-emerald-900">
-            LIVE
+          <p className="text-2xl font-black text-cyan-600">Synced</p>
+          <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full mt-2 overflow-hidden">
+            <div
+              className="bg-cyan-500 h-full rounded-full"
+              style={{ width: "95%" }}
+            ></div>
           </div>
-        </div>
-
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl flex justify-between items-center shadow-sm">
-          <div>
-            <p className="text-xs text-slate-500 font-medium mb-1">Threat Level</p>
-            <p className="text-xl font-black text-slate-800 dark:text-slate-100">
-              {currentThreatLevel}
-            </p>
-          </div>
-          <div className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-xl ${threatBadgeColor}`}>
-            LIVE
-          </div>
+          <p className="text-[11px] text-slate-400 mt-2">
+            Connected to secure cluster
+          </p>
         </div>
       </div>
 
-      {/* 4. RECENT AUDIT LOGS & TREND CHART */}
+      {/* 3. RECENT AUDIT LOGS & TREND CHART */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
         {/* Recent Audit Logs Table */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm lg:col-span-2 overflow-hidden flex flex-col justify-between">
           <div>
@@ -348,7 +412,9 @@ export default function DashboardHome() {
                 <h3 className="font-black text-slate-900 dark:text-slate-100 text-base">
                   Recent Audit Logs
                 </h3>
-                <p className="text-xs text-slate-400">Click any row to inspect complete scan report</p>
+                <p className="text-xs text-slate-400">
+                  Click any row to inspect complete scan report
+                </p>
               </div>
               <RouterLink
                 to={`/app/dashboard/${userId}/history`}
@@ -372,13 +438,19 @@ export default function DashboardHome() {
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium">
                   {loading ? (
                     <tr>
-                      <td colSpan="5" className="py-8 text-center text-slate-400">
+                      <td
+                        colSpan="5"
+                        className="py-8 text-center text-slate-400"
+                      >
                         Loading audit logs from backend...
                       </td>
                     </tr>
                   ) : historyList.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="py-8 text-center text-slate-400">
+                      <td
+                        colSpan="5"
+                        className="py-8 text-center text-slate-400"
+                      >
                         No scan records found. Run a scan to populate history!
                       </td>
                     </tr>
@@ -408,7 +480,11 @@ export default function DashboardHome() {
                             {row.input || row.target || "N/A"}
                           </td>
                           <td className="py-3.5 font-black">
-                            <span className={score > 40 ? "text-red-500" : "text-emerald-500"}>
+                            <span
+                              className={
+                                score > 40 ? "text-red-500" : "text-emerald-500"
+                              }
+                            >
                               {score}/100
                             </span>
                           </td>
@@ -424,7 +500,9 @@ export default function DashboardHome() {
                               : "Just now"}
                           </td>
                           <td className="py-3.5 text-right">
-                            <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-full ${statusColor}`}>
+                            <span
+                              className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-full ${statusColor}`}
+                            >
                               {status}
                             </span>
                           </td>

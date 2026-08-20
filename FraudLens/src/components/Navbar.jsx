@@ -13,7 +13,7 @@ import {
   Settings,
 } from "lucide-react";
 import { auth } from "../firebase/firebase";
-import { signOut } from "firebase/auth"; // 🛠️ Added Firebase signOut
+import { signOut } from "firebase/auth";
 
 export default function Navbar({ toggleSidebar }) {
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -21,13 +21,14 @@ export default function Navbar({ toggleSidebar }) {
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(""); // ✨ Fixed here (= instead of +)
   const dropdownRef = useRef(null);
 
   const currentUser = auth.currentUser;
+  const userId = currentUser?.uid || "guest";
   const displayName = currentUser?.displayName || "Aman Yadav";
   const displayInitial = displayName ? displayName.charAt(0).toUpperCase() : "A";
   
-  // Use resolvedTheme for accurate theme switching detection
   const currentTheme = resolvedTheme || theme;
   const isDark = mounted && currentTheme === "dark";
 
@@ -46,14 +47,38 @@ export default function Navbar({ toggleSidebar }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 🛠️ SECURE LOGOUT FIX
+  // GLOBAL SEARCH ROUTING / SMART HANDLER
+  const handleGlobalSearch = (e) => {
+    e.preventDefault();
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return;
+
+    if (query.includes("analytic") || query.includes("graph") || query.includes("report")) {
+      navigate(`/app/dashboard/${userId}/analytics`);
+    } else if (query.includes("url") || query.includes("link")) {
+      navigate(`/app/dashboard/${userId}/url`);
+    } else if (query.includes("text") || query.includes("message") || query.includes("sms")) {
+      navigate(`/app/dashboard/${userId}/message`);
+    } else if (query.includes("qr") || query.includes("code")) {
+      navigate(`/app/dashboard/${userId}/qr`);
+    } else if (query.includes("image") || query.includes("screenshot")) {
+      navigate(`/app/dashboard/${userId}/image`);
+    } else if (query.includes("setting") || query.includes("account")) {
+      navigate(`/app/dashboard/${userId}/settings`);
+    } else if (query.includes("extension") || query.includes("plugin")) {
+      navigate(`/app/dashboard/${userId}/extension`);
+    } else {
+      navigate(`/app/dashboard/${userId}/history?search=${encodeURIComponent(searchQuery)}`);
+    }
+
+    setSearchQuery("");
+  };
+
   const handleLogout = async () => {
     try {
-      await signOut(auth); // Properly sign out from Firebase
+      await signOut(auth);
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      
-      // Use replace: true so back button cannot return to dashboard history
       navigate("/login", { replace: true });
     } catch (err) {
       console.error("Logout failed:", err);
@@ -72,7 +97,7 @@ export default function Navbar({ toggleSidebar }) {
           : "bg-white/90 border-b border-slate-200 backdrop-blur-md text-slate-900"
       }`}
     >
-      {/* ================= LEFT SIDE (Menu Toggle + Logo) ================= */}
+      {/* LEFT SIDE */}
       <div className="flex items-center gap-3">
         <button
           onClick={toggleSidebar}
@@ -87,7 +112,7 @@ export default function Navbar({ toggleSidebar }) {
         </button>
 
         <Link
-          to="/app/dashboard"
+          to={`/app/dashboard/${userId}`}
           className="flex items-center gap-2.5 hover:opacity-90 transition-opacity"
         >
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
@@ -99,29 +124,32 @@ export default function Navbar({ toggleSidebar }) {
         </Link>
       </div>
 
-      {/* ================= MIDDLE (Search Bar) ================= */}
-      <div
+      {/* MIDDLE: GLOBAL SEARCH BAR */}
+      <form
+        onSubmit={handleGlobalSearch}
         className={`hidden md:flex items-center flex-1 max-w-md mx-6 border rounded-2xl px-3.5 py-2 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all ${
           isDark
             ? "bg-slate-800/60 border-slate-700/80 text-white"
             : "bg-slate-50 border-slate-200 text-slate-800"
         }`}
       >
-        <Search
-          size={18}
-          className={`mr-2.5 shrink-0 ${isDark ? "text-slate-500" : "text-slate-400"}`}
-        />
+        <button type="submit" aria-label="Search">
+          <Search
+            size={18}
+            className={`mr-2.5 shrink-0 cursor-pointer hover:text-blue-500 transition-colors ${isDark ? "text-slate-500" : "text-slate-400"}`}
+          />
+        </button>
         <input
           type="text"
-          placeholder="Search scans, threats, logs..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search tools (Analytics, URL, QR) or logs... (Press Enter)"
           className="w-full bg-transparent border-none outline-none text-sm placeholder-slate-400 dark:placeholder-slate-500"
         />
-      </div>
+      </form>
 
-      {/* ================= RIGHT SIDE (Actions & Profile) ================= */}
+      {/* RIGHT SIDE */}
       <div className="flex items-center gap-2 sm:gap-3.5 ml-auto shrink-0">
-        
-        {/* Theme Toggle Button */}
         <button
           onClick={() => setTheme(isDark ? "light" : "dark")}
           aria-label="Toggle Theme"
@@ -134,7 +162,6 @@ export default function Navbar({ toggleSidebar }) {
           {isDark ? <Sun size={19} /> : <Moon size={19} />}
         </button>
 
-        {/* Notification Bell */}
         <button
           aria-label="Notifications"
           className={`p-2.5 rounded-xl transition-colors relative ${
@@ -147,11 +174,9 @@ export default function Navbar({ toggleSidebar }) {
           <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-slate-900 animate-pulse"></span>
         </button>
 
-        <div
-          className={`h-6 w-px mx-1 hidden sm:block ${isDark ? "bg-slate-700" : "bg-slate-200"}`}
-        ></div>
+        <div className={`h-6 w-px mx-1 hidden sm:block ${isDark ? "bg-slate-700" : "bg-slate-200"}`}></div>
 
-        {/* ================= PROFILE DROPDOWN ================= */}
+        {/* PROFILE DROPDOWN */}
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -172,7 +197,6 @@ export default function Navbar({ toggleSidebar }) {
             </div>
           </button>
 
-          {/* Popup Dropdown Menu */}
           {isProfileOpen && (
             <div
               className={`absolute right-0 mt-3 w-60 rounded-2xl shadow-2xl py-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-200 border ${
@@ -181,27 +205,11 @@ export default function Navbar({ toggleSidebar }) {
                   : "bg-white border-slate-200 text-slate-800"
               }`}
             >
-              {/* Mobile View Profile Header Info */}
-              <div
-                className={`sm:hidden px-4 py-3 border-b mb-1.5 ${
-                  isDark ? "border-slate-700" : "border-slate-100"
-                }`}
-              >
-                <p className="text-sm font-bold capitalize truncate">
-                  {displayName}
-                </p>
-                <p className="text-xs text-blue-600 dark:text-cyan-400 font-medium">
-                  Cyber Security Pro Member
-                </p>
-              </div>
-
               <Link
-                to="/app/dashboard/profile"
+                to={`/app/dashboard/${userId}/profile`}
                 onClick={() => setIsProfileOpen(false)}
                 className={`flex items-center gap-3 px-4 py-2.5 text-xs font-bold transition-colors ${
-                  isDark
-                    ? "hover:bg-slate-700/70 hover:text-blue-400 text-slate-300"
-                    : "hover:bg-slate-50 hover:text-blue-600 text-slate-700"
+                  isDark ? "hover:bg-slate-700/70 hover:text-blue-400 text-slate-300" : "hover:bg-slate-50 hover:text-blue-600 text-slate-700"
                 }`}
               >
                 <User size={16} className="text-blue-500" />
@@ -209,28 +217,22 @@ export default function Navbar({ toggleSidebar }) {
               </Link>
 
               <Link
-                to="/app/dashboard/settings"
+                to={`/app/dashboard/${userId}/settings`}
                 onClick={() => setIsProfileOpen(false)}
                 className={`flex items-center gap-3 px-4 py-2.5 text-xs font-bold transition-colors ${
-                  isDark
-                    ? "hover:bg-slate-700/70 hover:text-blue-400 text-slate-300"
-                    : "hover:bg-slate-50 hover:text-blue-600 text-slate-700"
+                  isDark ? "hover:bg-slate-700/70 hover:text-blue-400 text-slate-300" : "hover:bg-slate-50 hover:text-blue-600 text-slate-700"
                 }`}
               >
                 <Settings size={16} className="text-indigo-500" />
                 Account Settings
               </Link>
 
-              <div
-                className={`h-px my-1.5 ${isDark ? "bg-slate-700" : "bg-slate-100"}`}
-              ></div>
+              <div className={`h-px my-1.5 ${isDark ? "bg-slate-700" : "bg-slate-100"}`}></div>
 
               <button
                 onClick={handleLogout}
                 className={`w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold transition-colors ${
-                  isDark
-                    ? "text-red-400 hover:bg-red-950/40"
-                    : "text-red-600 hover:bg-red-50"
+                  isDark ? "text-red-400 hover:bg-red-950/40" : "text-red-600 hover:bg-red-50"
                 }`}
               >
                 <LogOut size={16} />
