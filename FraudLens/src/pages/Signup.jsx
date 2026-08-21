@@ -135,9 +135,16 @@ export default function Signup() {
     setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
+      
+      // ✨ Yeh line add karni hai taaki hamesha account selection prompt aaye
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
+
       const res = await signInWithPopup(auth, provider);
       await syncUserWithBackend(res.user);
-      navigate("/app/dashboard");
+      
+      navigate(`/app/dashboard/${res.user.uid}`);
     } catch (err) {
       console.error("❌ Google Signup failed:", err);
       setError(err.message || "Google Signup Failed");
